@@ -1,7 +1,7 @@
-# CAB302 Major Assignment
+# CAB302
 Source code of the CAB302 major assignment: Electornic Billboard Display and Management System
 
 # Authors
-Steven Balagtas
-Charles Cruz
+Steven Balagtas\
+Charles Cruz\
 Felix Savins
