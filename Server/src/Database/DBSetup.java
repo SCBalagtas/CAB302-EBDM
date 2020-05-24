@@ -128,23 +128,30 @@ public class DBSetup {
     /**
      * Creates all the tables required for the EBDM database if they do not already exist.
      */
-    public static void setupTables() throws SQLException {
+    public static void setupTables() {
         System.out.println("Setting up database");
 
-        // create new connection and statement object
-        Connection connection = DBConnection.getConnection();
-        Statement statement = connection.createStatement();
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            Statement statement = connection.createStatement();
 
-        createUsersTable(statement);
-        createBillboardsTable(statement);
-        createSchedulesTable(statement);
-        createPermissionsTable(statement);
-        createUserPermissionsTable(statement);
+            createUsersTable(statement);
+            createBillboardsTable(statement);
+            createSchedulesTable(statement);
+            createPermissionsTable(statement);
+            createUserPermissionsTable(statement);
 
-        // close statement and connection object
-        statement.close();
-        connection.close();
+            // close statement and connection object
+            statement.close();
+            connection.close();
 
-        System.out.print("SUCCESS!");
+            System.out.print("SUCCESS!");
+
+        } catch (Exception e) {
+            System.err.println(e);
+            System.out.println("Could not connect to database");
+            System.out.println("FAILURE!");
+        }
     }
 }
