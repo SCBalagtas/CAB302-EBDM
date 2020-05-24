@@ -1,6 +1,7 @@
 package Database;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -83,6 +84,23 @@ public class DBSetup {
 
         // execute create table statement
         statement.execute(createPermissions);
+
+        // if the permissions table is empty, initialise it with the four user permissions
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM permissions");
+        if (!resultSet.next()) {
+            // result set is empty, initialise permissions with the four user permissions
+            String insertPermissions = "INSERT INTO permissions VALUES "
+                    + "(0, 'Edit Users'), "
+                    + "(1, 'Create Billboards'), "
+                    + "(2, 'Edit All Billboards'), "
+                    + "(3, 'Schedule Billboards')";
+
+            // execute insert values statement
+            statement.executeUpdate(insertPermissions);
+        }
+
+        // close the result set
+        resultSet.close();
 
         // print a ". " to command line to show progress
         System.out.print(". ");
