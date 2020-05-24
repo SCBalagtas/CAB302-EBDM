@@ -1,5 +1,6 @@
 package Database;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -85,23 +86,6 @@ public class DBSetup {
         // execute create table statement
         statement.execute(createPermissions);
 
-        // if the permissions table is empty, initialise it with the four user permissions
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM permissions");
-        if (!resultSet.next()) {
-            // result set is empty, initialise permissions with the four user permissions
-            String insertPermissions = "INSERT INTO permissions VALUES "
-                    + "(0, 'Edit Users'), "
-                    + "(1, 'Create Billboards'), "
-                    + "(2, 'Edit All Billboards'), "
-                    + "(3, 'Schedule Billboards')";
-
-            // execute insert values statement
-            statement.executeUpdate(insertPermissions);
-        }
-
-        // close the result set
-        resultSet.close();
-
         // print a ". " to command line to show progress
         System.out.print(". ");
     }
@@ -126,6 +110,40 @@ public class DBSetup {
     }
 
     /**
+     * Populates the permissions table with the four user permissions.
+     */
+    private static void populatePermissions(Statement statement) throws SQLException {
+        // initialise permissions with the four user permissions
+        String insertPermissions = "INSERT INTO permissions VALUES "
+                + "(0, 'Edit Users'), "
+                + "(1, 'Create Billboards'), "
+                + "(2, 'Edit All Billboards'), "
+                + "(3, 'Schedule Billboards')";
+
+        // execute insert values statement
+        statement.executeUpdate(insertPermissions);
+    }
+
+    /**
+     * Creates an admin account with full permissions.
+     */
+    private static void createAdmin(Statement statement) throws SQLException {
+        // initialise an admin user
+        String insertUser = "INSERT INTO users (userName, password) VALUES "
+                + "('admin', 'admin')";
+
+        String insertUserPermissions = "INSERT INTO userPermissions VALUES "
+                + "('admin', 0), "
+                + "('admin', 1), "
+                + "('admin', 2), "
+                + "('admin', 3)";
+
+        // execute insert values statement
+        statement.executeUpdate(insertUser);
+        statement.executeUpdate(insertUserPermissions);
+    }
+
+    /**
      * Creates all the tables required for the EBDM database if they do not already exist.
      */
     public static void setupTables() {
@@ -141,6 +159,21 @@ public class DBSetup {
             createSchedulesTable(statement);
             createPermissionsTable(statement);
             createUserPermissionsTable(statement);
+
+            // if the permissions table is empty, initialise it with the four user permissions
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM permissions");
+            if (!resultSet.next()) {
+                populatePermissions(statement);
+            }
+
+            // if the users table is empty, initialise an admin user with full permissions
+            resultSet = statement.executeQuery("SELECT * FROM users");
+            if (!resultSet.next()) {
+                createAdmin(statement);
+            }
+
+            // close result set
+            resultSet.close();
 
             // close statement and connection object
             statement.close();
