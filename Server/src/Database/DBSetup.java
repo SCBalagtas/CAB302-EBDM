@@ -219,6 +219,6 @@ public class DBSetup {
         statement.close();
         connection.close();
 
-        System.out.print("SUCCESS!");
+        System.out.println("SUCCESS!");
     }
 }

@@ -1,4 +1,6 @@
 import Database.DBSetup;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 /**
  * Author: Steven Balagtas
@@ -18,9 +20,17 @@ public class Main {
             System.exit(0);
         }
 
-        // infinite loop to simulate the server behaviour
-        for (;;) {
-            // ...
+        // initialise server
+        try {
+            ServerSocket serverSocket = new ServerSocket(ServerConfig.getPort());
+            System.out.println("Server is now running and serving on port: " + ServerConfig.getPort());
+
+            // infinite loop to simulate the server behaviour
+            for (;;) {
+                // ...
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
