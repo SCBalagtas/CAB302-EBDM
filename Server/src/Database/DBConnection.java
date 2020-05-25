@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
+ * Author: CAB302 Teaching Team
+ *
  * Change the db.props file to change which database to connect to.
  */
 
