@@ -182,8 +182,7 @@ public class DBSetup {
 
         } catch (Exception e) {
             System.err.println(e);
-            System.out.println("Could not connect to database");
-            System.out.println("FAILURE!");
+            System.out.println("FAILURE! Could not connect to database");
         }
     }
 }
