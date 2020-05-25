@@ -14,6 +14,9 @@ import java.sql.Statement;
 public class DBSetup {
     /**
      * Creates the users table in the EBDM database if it does not already exist.
+     *
+     * @param statement object to perform database query.
+     * @throws SQLException if database query fails.
      */
     private static void createUsersTable(Statement statement) throws SQLException {
         // sql statement to create the users table
@@ -32,6 +35,9 @@ public class DBSetup {
 
     /**
      * Creates the billboards table in the EBDM database.
+     *
+     * @param statement object to perform database query.
+     * @throws SQLException if database query fails.
      */
     private static void createBillboardsTable(Statement statement) throws SQLException {
         // sql statement to create the billboards table
@@ -52,6 +58,9 @@ public class DBSetup {
 
     /**
      * Creates the schedules table in the EBDM database.
+     *
+     * @param statement object to perform database query.
+     * @throws SQLException if database query fails.
      */
     private static void createSchedulesTable(Statement statement) throws SQLException {
         // sql statement to create the schedules table
@@ -75,6 +84,9 @@ public class DBSetup {
 
     /**
      * Creates the permissions table in the EBDM database.
+     *
+     * @param statement object to perform database query.
+     * @throws SQLException if database query fails.
      */
     private static void createPermissionsTable(Statement statement) throws SQLException {
         // sql statement to create the permissions table
@@ -91,6 +103,9 @@ public class DBSetup {
 
     /**
      * Creates the userPermissions table in the EBDM database.
+     *
+     * @param statement object to perform database query.
+     * @throws SQLException if database query fails.
      */
     private static void createUserPermissionsTable(Statement statement) throws SQLException {
         // sql statement to create the userPermissions table
@@ -110,6 +125,9 @@ public class DBSetup {
 
     /**
      * Populates the permissions table with the four user permissions.
+     *
+     * @param statement object to perform database query.
+     * @throws SQLException if database query fails.
      */
     private static void populatePermissions(Statement statement) throws SQLException {
         // initialise permissions with the four user permissions
@@ -128,6 +146,9 @@ public class DBSetup {
 
     /**
      * Creates an admin account with full permissions.
+     *
+     * @param statement object to perform database query.
+     * @throws SQLException if database query fails.
      */
     private static void createAdmin(Statement statement) throws SQLException {
         // initialise an admin user
