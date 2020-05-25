@@ -11,6 +11,7 @@ public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException{
 
+        //Calls login screen on start. Loginscreen not static as we may need to call different instances
         LoginScreen loginScreen = new LoginScreen();
         loginScreen.main();
 
@@ -19,7 +20,8 @@ public class Main {
     public static void homePage() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
         HomePage homePage = new HomePage();
-        homePage.main();
+        JFrame frame = new JFrame();
+        homePage.main(frame);
 
     }
 

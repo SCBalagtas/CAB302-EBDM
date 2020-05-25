@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 public class HomePage {
 
 
-    public void main() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        JFrame frame = new JFrame("Testing Frame");
+    public void main(JFrame frame) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+
         frame.setSize(800, 800); //Must be fullscreen for final application
 
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -25,12 +25,9 @@ public class HomePage {
         c.gridy = 1;
         panel.add(CreateBillboard, c);
 
-        CreateBillboard.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Create");
-                // Close frame using Frame.dispose() and open another or change what's in this frame
-            }
+        CreateBillboard.addActionListener(e -> {
+            System.out.println("Create");
+            // Close frame using Frame.dispose() and open another or change what's in this frame
         });
 
 
@@ -41,11 +38,16 @@ public class HomePage {
         c.gridy = 2;
         panel.add(ListBillboard, c);
 
-        ListBillboard.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("List");
-                // Close frame using Frame.dispose() and open another or change what's in this frame
+        ListBillboard.addActionListener(e -> {
+            System.out.println("List");
+            // Close frame using Frame.dispose() and open another or change what's in this frame
+            ListBillboards listBillboards = new ListBillboards();
+            frame.getContentPane().removeAll();
+            frame.repaint();
+            try {
+                listBillboards.main(frame);
+            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+                ex.printStackTrace();
             }
         });
 
@@ -57,11 +59,16 @@ public class HomePage {
         c.gridy = 3;
         panel.add(ScheduleBillboard, c);
 
-        ScheduleBillboard.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Schedule");
-                // Close frame using Frame.dispose() and open another or change what's in this frame
+        ScheduleBillboard.addActionListener(e -> {
+            System.out.println("Schedule");
+            // Close frame using Frame.dispose() and open another or change what's in this frame
+            ScheduleBillboards scheduleBillboards = new ScheduleBillboards();
+            frame.getContentPane().removeAll();
+            frame.repaint();
+            try {
+                scheduleBillboards.main(frame);
+            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+                ex.printStackTrace();
             }
         });
 
@@ -72,12 +79,9 @@ public class HomePage {
         c.gridy = 4;
         panel.add(EditUsers, c);
 
-        EditUsers.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Edit");
-                // Close frame using Frame.dispose() and open another or change what's in this frame
-            }
+        EditUsers.addActionListener(e -> {
+            System.out.println("Edit");
+            // Close frame using Frame.dispose() and open another or change what's in this frame
         });
 
 
