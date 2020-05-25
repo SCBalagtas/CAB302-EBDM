@@ -26,8 +26,8 @@ public class DBSetup {
         // execute create table statement
         statement.execute(createUsers);
 
-        // print a ". " to command line to show progress
-        System.out.print(". ");
+        // print table created message to command line
+        System.out.println("OK! Users table created");
     }
 
     /**
@@ -46,8 +46,8 @@ public class DBSetup {
         // execute create table statement
         statement.execute(createBillboards);
 
-        // print a ". " to command line to show progress
-        System.out.print(". ");
+        // print table created message to command line
+        System.out.println("OK! Billboards table created");
     }
 
     /**
@@ -69,8 +69,8 @@ public class DBSetup {
         // execute create table statement
         statement.execute(createSchedules);
 
-        // print a ". " to command line to show progress
-        System.out.print(". ");
+        // print table created message to command line
+        System.out.println("OK! Schedules table created");
     }
 
     /**
@@ -85,8 +85,8 @@ public class DBSetup {
         // execute create table statement
         statement.execute(createPermissions);
 
-        // print a ". " to command line to show progress
-        System.out.print(". ");
+        // print table created message to command line
+        System.out.println("OK! Permissions table created");
     }
 
     /**
@@ -104,8 +104,8 @@ public class DBSetup {
         // execute create table statement
         statement.execute(createUserPermissions);
 
-        // print a ". " to command line to show progress
-        System.out.print(". ");
+        // print table created message to command line
+        System.out.println("OK! User Permissions table created");
     }
 
     /**
@@ -121,6 +121,9 @@ public class DBSetup {
 
         // execute insert values statement
         statement.executeUpdate(insertPermissions);
+
+        // print values inserted message to command line
+        System.out.println("OK! Permissions table populated");
     }
 
     /**
@@ -140,35 +143,51 @@ public class DBSetup {
         // execute insert values statement
         statement.executeUpdate(insertUser);
         statement.executeUpdate(insertUserPermissions);
+
+        // print values inserted message to command line
+        System.out.println("OK! Admin user created");
     }
 
     /**
      * Creates all the tables required for the EBDM database if they do not already exist.
      */
     public static void setupTables() {
-        System.out.println("Setting up database");
+        System.out.println("Checking database status");
 
         try {
             // create new connection and statement object
             Connection connection = DBConnection.getConnection();
             Statement statement = connection.createStatement();
 
-            createUsersTable(statement);
-            createBillboardsTable(statement);
-            createSchedulesTable(statement);
-            createPermissionsTable(statement);
-            createUserPermissionsTable(statement);
+            // if the EBDM db is empty, create all the required tables
+            ResultSet resultSet = statement.executeQuery("SHOW TABLES");
+            if (!resultSet.next()) {
+                System.out.println("Database is empty! Creating tables now...");
+                createUsersTable(statement);
+                createBillboardsTable(statement);
+                createSchedulesTable(statement);
+                createPermissionsTable(statement);
+                createUserPermissionsTable(statement);
+            } else {
+                System.out.println("OK! Tables already exist");
+            }
 
             // if the permissions table is empty, initialise it with the four user permissions
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM permissions");
+            resultSet = statement.executeQuery("SELECT * FROM permissions");
             if (!resultSet.next()) {
+                System.out.println("Permissions table is empty! Populating now...");
                 populatePermissions(statement);
+            } else {
+                System.out.println("OK! Permissions table already populated");
             }
 
             // if the users table is empty, initialise an admin user with full permissions
             resultSet = statement.executeQuery("SELECT * FROM users");
             if (!resultSet.next()) {
+                System.out.println("Users table is empty! Creating admin user now...");
                 createAdmin(statement);
+            } else {
+                System.out.println("OK! Users table already populated");
             }
 
             // close result set
