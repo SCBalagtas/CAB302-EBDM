@@ -1,3 +1,4 @@
+import Classes.Request;
 import Configs.ServerConfig;
 import Database.DBSetup;
 import java.io.*;
@@ -36,16 +37,16 @@ public class Main {
                 InputStream inputStream = socket.getInputStream();
                 ObjectInputStream ois = new ObjectInputStream(inputStream);
 
-                Object request = ois.readObject();
+                Request request = (Request) ois.readObject();
 
                 System.out.println("\nClient connected: " + socket.getInetAddress());
-                System.out.println("Client requested: " + request);
+                System.out.println("Client requested: " + request.getRequestType() + " with parameters: " + request.getRequestParameters().toString());
 
                 // write a response to the client
                 OutputStream outputStream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(outputStream);
 
-                oos.writeObject("Request for: '" + request + "' received");
+                oos.writeObject("Request for: '" + request.getRequestType() + "' received");
                 oos.flush();
 
                 // close the streams

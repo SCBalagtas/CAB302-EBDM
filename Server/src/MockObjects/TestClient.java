@@ -1,8 +1,10 @@
 package MockObjects;
 
+import Classes.Request;
 import Configs.ServerConfig;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Author: Steven Balagtas
@@ -13,7 +15,6 @@ import java.net.Socket;
 public class TestClient {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         serverRequest1();
-        serverRequest2();
     }
 
     public static void serverRequest1() throws IOException, ClassNotFoundException {
@@ -24,32 +25,13 @@ public class TestClient {
         OutputStream outputStream = socket.getOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(outputStream);
 
-        oos.writeObject("Hi server!");
-        oos.flush();
+        ArrayList<String> parameters = new ArrayList<>();
+        parameters.add("admin");
+        parameters.add("admin");
 
-        // read the server's response
-        InputStream inputStream = socket.getInputStream();
-        ObjectInputStream ois = new ObjectInputStream(inputStream);
+        Request request = new Request("Login", parameters);
 
-        System.out.println(ois.readObject());
-
-        // close the streams
-        oos.close();
-        ois.close();
-
-        // close the connection
-        socket.close();
-    }
-
-    public static void serverRequest2() throws IOException, ClassNotFoundException {
-        // open a connection to the server
-        Socket socket = new Socket("localhost", ServerConfig.getPort());
-
-        // write a request to the client
-        OutputStream outputStream = socket.getOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-
-        oos.writeObject("How are you?");
+        oos.writeObject(request);
         oos.flush();
 
         // read the server's response

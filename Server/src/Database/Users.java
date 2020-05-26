@@ -22,7 +22,7 @@ public class Users {
      * */
     public static ArrayList<String> getUserCredentials(String userName) throws SQLException {
         // string ArrayList to store the user's credentials in
-        ArrayList<String> userCredentials = new ArrayList<String>();
+        ArrayList<String> userCredentials = new ArrayList<>();
 
         // create new connection and statement object
         Connection connection = DBConnection.getConnection();
