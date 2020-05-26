@@ -18,7 +18,7 @@ public class Login {
      * @param password of the user.
      * @return true if the userName and password parameters provided match a record in the database.
      */
-    public static boolean authenticateUserCredentials(String userName, String password) {
+    private static boolean authenticateUserCredentials(String userName, String password) {
         // string ArrayList to store sql query results in
         ArrayList<String> userCredentials;
 
