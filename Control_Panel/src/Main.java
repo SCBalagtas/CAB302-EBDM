@@ -22,6 +22,13 @@ public class Main {
 
     }
 
+    public static void createBillboard() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+
+        CreateBillboard createBillboard = new CreateBillboard("Create Billboard");
+        createBillboard.main();
+
+    }
+
 }
 
 

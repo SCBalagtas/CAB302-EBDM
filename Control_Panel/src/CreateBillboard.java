@@ -7,8 +7,6 @@ public class CreateBillboard extends JFrame implements Runnable {
     private int WIDTH = 1280;
     private int HEIGHT = 720;
 
-    JPanel mainPanel;
-
     public CreateBillboard(String title) throws HeadlessException {
         super(title);
     }
@@ -21,10 +19,9 @@ public class CreateBillboard extends JFrame implements Runnable {
         setVisible(true);
         setMinimumSize(new Dimension(WIDTH, HEIGHT));
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         //mainPanel
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setBackground(Color.GREEN);
         setLayout(new GridBagLayout());
 
@@ -113,33 +110,36 @@ public class CreateBillboard extends JFrame implements Runnable {
         gbCons.gridy = 6;
         this.getContentPane().add(cancelBtn, gbCons);
 
-        createBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String bbNameValue = bbName.getText();
-                String bbMsgValue = bbMsg.getText();
-                String bbImgValue = bbImg.getText();
-                String bbInfoValue = bbInfo.getText();
+        JButton btnClose = new JButton("Close");
+        gbCons.fill = GridBagConstraints.HORIZONTAL;
+        gbCons.gridx = 0;
+        gbCons.gridy = 7;
+        this.getContentPane().add(btnClose, gbCons);
 
-                System.out.println(String.format("Creating Billboard...\n" +
-                        "Name: %s\n" +
-                        "Message: %s\n" +
-                        "Image: %s\n" +
-                        "Info: %s\n", bbNameValue, bbMsgValue, bbImgValue, bbInfoValue));
+        createBtn.addActionListener(e -> {
+            String bbNameValue = bbName.getText();
+            String bbMsgValue = bbMsg.getText();
+            String bbImgValue = bbImg.getText();
+            String bbInfoValue = bbInfo.getText();
 
-            }
+            System.out.println(String.format("Creating Billboard...\n" +
+                    "Name: %s\n" +
+                    "Message: %s\n" +
+                    "Image: %s\n" +
+                    "Info: %s\n", bbNameValue, bbMsgValue, bbImgValue, bbInfoValue));
+
+            this.dispose();
         });
 
-        cancelBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                bbName.setText("");
-                bbMsg.setText("");
-                bbImg.setText("");
-                bbInfo.setText("");
+        cancelBtn.addActionListener(e -> {
+            bbName.setText("");
+            bbMsg.setText("");
+            bbImg.setText("");
+            bbInfo.setText("");
 
-                System.out.println("TextFields Reset!");
-            }
+            System.out.println("Create Billboard Cancelled!");
+
+            this.dispose();
         });
     }
 
@@ -158,8 +158,8 @@ public class CreateBillboard extends JFrame implements Runnable {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new CreateBillboard("Add Billboard"));
+    public static void main() {
+        SwingUtilities.invokeLater(new CreateBillboard("Create Billboard"));
     }
 
 }
