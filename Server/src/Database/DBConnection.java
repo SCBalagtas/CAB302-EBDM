@@ -55,7 +55,7 @@ public class DBConnection {
      * @return a handle to the singleton instance of the UrlSet.
      */
     public static Connection getConnection() {
-        if (connection == null) { new DBConnection(); }
+        new DBConnection();
         return connection;
     }
 }
