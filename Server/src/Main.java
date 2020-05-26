@@ -23,7 +23,7 @@ public class Main {
         // initialise server
         try {
             ServerSocket serverSocket = new ServerSocket(ServerConfig.getPort());
-            System.out.println("Server is now running and serving on port: " + ServerConfig.getPort());
+            System.out.println("Server is now running and listening on port: " + ServerConfig.getPort());
 
             // infinite loop to simulate the server behaviour
             for (;;) {

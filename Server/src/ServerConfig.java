@@ -6,13 +6,13 @@ import java.util.Properties;
 /**
  * Author: Steven Balagtas
  *
- * This class will read the server.props file for the port number that the server will serve on.
- * Change the server.props file to change which port the server will serve on.
+ * This class will read the server.props file for the port number that the server will listen on.
+ * Change the server.props file to change which port the server will listen on.
  */
 
 public class ServerConfig {
     /**
-     * The port number the server will serve on.
+     * The port number the server will listen on.
      */
     private static int port = -1;
 
@@ -37,9 +37,9 @@ public class ServerConfig {
     }
 
     /**
-     * Provides global access to the port number that the server will serve on.
+     * Provides global access to the port number that the server will listen on.
      *
-     * @return the port number that the server will serve on.
+     * @return the port number that the server will listen on.
      */
     public static int getPort() {
         if (port == -1) { new ServerConfig(); }
