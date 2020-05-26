@@ -1,5 +1,6 @@
 package MockObjects;
 
+import Configs.ServerConfig;
 import java.io.*;
 import java.net.Socket;
 
@@ -17,7 +18,7 @@ public class TestClient {
 
     public static void serverRequest1() throws IOException, ClassNotFoundException {
         // open a connection to the server
-        Socket socket = new Socket("localhost", 3000);
+        Socket socket = new Socket("localhost", ServerConfig.getPort());
 
         // write a request to the client
         OutputStream outputStream = socket.getOutputStream();
@@ -42,7 +43,7 @@ public class TestClient {
 
     public static void serverRequest2() throws IOException, ClassNotFoundException {
         // open a connection to the server
-        Socket socket = new Socket("localhost", 3000);
+        Socket socket = new Socket("localhost", ServerConfig.getPort());
 
         // write a request to the client
         OutputStream outputStream = socket.getOutputStream();
