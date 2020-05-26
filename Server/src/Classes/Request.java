@@ -32,16 +32,12 @@ public class Request implements Serializable {
      *
      * @return a string of the request type.
      */
-    public String getRequestType() {
-        return this.requestType;
-    }
+    public String getRequestType() { return this.requestType; }
 
     /**
      * Get the request parameters.
      *
      * @return a string ArrayList of the request parameters.
      */
-    public ArrayList<String> getRequestParameters() {
-        return this.requestParameters;
-    }
+    public ArrayList<String> getRequestParameters() { return this.requestParameters; }
 }
