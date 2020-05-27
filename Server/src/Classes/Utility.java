@@ -34,4 +34,10 @@ public class Utility {
         rng.nextBytes(tokenBytes);
         return bytesToString(tokenBytes);
     }
+
+    /**
+     * Check if session token has expired.
+     *
+     * @return true if the session token has expired.
+     */
 }

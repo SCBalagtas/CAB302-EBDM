@@ -62,15 +62,15 @@ public class Login {
 
             // write a response to the client depending on the result from authenticating the user credentials
             if (authenticateUserCredentials(userName, password)) {
-                // create a new inner HashMap to store the session token and it's creation date and time
-                HashMap<String, LocalDateTime> userToken = new HashMap<>();
+                // create a new inner HashMap to store the session token and it's expiry date and time
+                HashMap<String, LocalDateTime> sessionToken = new HashMap<>();
 
-                // generate session token and store it into userToken
+                // generate session token and store it into sessionToken
                 String token = generateSessionToken();
-                userToken.put(token, LocalDateTime.now());
+                sessionToken.put(token, LocalDateTime.now().plusDays(1)); // 24 hours from creation date
 
-                // store userToken into sessions
-                sessions.put(userName, userToken);
+                // store sessionToken into sessions
+                sessions.put(userName, sessionToken);
 
                 oos.writeObject(new Response(StatusCodes.OK, token));
             } else {
