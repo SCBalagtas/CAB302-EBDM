@@ -8,7 +8,7 @@ import Routes.Login;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -30,7 +30,7 @@ public class Main {
         }
 
         // instantiate a new session HashMap
-        HashMap<String, HashMap<String, LocalDateTime>> sessions = new HashMap<>();
+        HashMap<String, ArrayList<String>> sessions = new HashMap<>();
 
         // initialise and run the server
         try {

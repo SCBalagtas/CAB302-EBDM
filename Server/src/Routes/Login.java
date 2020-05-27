@@ -51,7 +51,7 @@ public class Login {
      * @param parameters a string ArrayList of the parameters to authenticate the user.
      * @param oos an ObjectOutputStream object to write a response to the client.
      */
-    public static void login(ArrayList<String> parameters, HashMap<String, HashMap<String, LocalDateTime>> sessions, ObjectOutputStream oos) throws IOException {
+    public static void login(ArrayList<String> parameters, HashMap<String, ArrayList<String>> sessions, ObjectOutputStream oos) throws IOException {
         // check if correct number of parameters have been provided
         if (parameters.size() != 2) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
@@ -62,15 +62,16 @@ public class Login {
 
             // write a response to the client depending on the result from authenticating the user credentials
             if (authenticateUserCredentials(userName, password)) {
-                // create a new inner HashMap to store the session token and it's expiry date and time
-                HashMap<String, LocalDateTime> sessionToken = new HashMap<>();
-
-                // generate session token and store it into sessionToken
+                // generate session token
                 String token = generateSessionToken();
-                sessionToken.put(token, LocalDateTime.now().plusDays(1)); // 24 hours from creation date
 
-                // store sessionToken into sessions
-                sessions.put(userName, sessionToken);
+                // create a new ArrayList to store the username of the token owner and it's expiry date and time
+                ArrayList<String> tokenInfo = new ArrayList<>();
+                tokenInfo.add(userName);
+                tokenInfo.add(LocalDateTime.now().plusDays(1).toString()); // 24 hours from creation date
+
+                // store tokenInfo into sessions
+                sessions.put(token, tokenInfo);
 
                 oos.writeObject(new Response(StatusCodes.OK, token));
             } else {
