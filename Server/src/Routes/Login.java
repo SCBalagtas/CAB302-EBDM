@@ -49,6 +49,7 @@ public class Login {
      * This is the method to handle the login request.
      *
      * @param parameters a string ArrayList of the parameters to authenticate the user.
+     * @param sessions a HashMap of the active session tokens for the server.
      * @param oos an ObjectOutputStream object to write a response to the client.
      */
     public static void login(ArrayList<String> parameters, HashMap<String, ArrayList<String>> sessions, ObjectOutputStream oos) throws IOException {

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class TestClient {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+        // login request tests
         ArrayList<String> workingLogin = new ArrayList<>();
         workingLogin.add("admin");
         workingLogin.add("admin");
@@ -29,12 +30,27 @@ public class TestClient {
         brokenLogin.add("admin");
         brokenLogin.add("admin");
 
-        sendRequest(RequestTypes.LOGIN, workingLogin);
+        String token = sendRequest(RequestTypes.LOGIN, workingLogin); // This is the only request that will return a token
         sendRequest(RequestTypes.LOGIN, wrongLogin);
         sendRequest(RequestTypes.LOGIN, brokenLogin);
+
+        // logout request tests
+        ArrayList<String> workingLogout = new ArrayList<>();
+        workingLogout.add(token);
+
+        ArrayList<String> wrongLogout = new ArrayList<>();
+        wrongLogout.add("Fake Token");
+
+        ArrayList<String> brokenLogout = new ArrayList<>();
+        brokenLogout.add("admin");
+        brokenLogout.add("admin");
+
+        sendRequest(RequestTypes.LOGOUT, workingLogout);
+        sendRequest(RequestTypes.LOGOUT, wrongLogout);
+        sendRequest(RequestTypes.LOGOUT, brokenLogout);
     }
 
-    public static void sendRequest(String requestType, ArrayList<String> parameters) throws IOException, ClassNotFoundException {
+    public static String sendRequest(String requestType, ArrayList<String> parameters) throws IOException, ClassNotFoundException {
         // open a connection to the server
         Socket socket = new Socket("localhost", ServerConfig.getPort());
 
@@ -57,11 +73,16 @@ public class TestClient {
         System.out.println(response.getStatusCode());
         System.out.println((response.getContent()).toString() + "\n");
 
+        String content = response.getContent().toString();
+
         // close the streams
         oos.close();
         ois.close();
 
         // close the connection
         socket.close();
+
+        // return the content from the response
+        return content;
     }
 }

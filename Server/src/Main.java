@@ -5,6 +5,7 @@ import Constants.RequestTypes;
 import Constants.StatusCodes;
 import Database.DBSetup;
 import Routes.Login;
+import Routes.Logout;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -57,9 +58,11 @@ public class Main {
                 oos.writeObject("Request for: '" + request.getRequestType() + "' received");
                 oos.flush();
 
-                // test Login route here
+                // handle requests here
                 if (request.getRequestType().equals(RequestTypes.LOGIN)) {
                     Login.login(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.LOGOUT)) {
+                    Logout.logout(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();
