@@ -16,10 +16,25 @@ import java.util.ArrayList;
 
 public class TestClient {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        loginRequest();
+        ArrayList<String> workingLogin = new ArrayList<>();
+        workingLogin.add("admin");
+        workingLogin.add("admin");
+
+        ArrayList<String> wrongLogin = new ArrayList<>();
+        wrongLogin.add("admin");
+        wrongLogin.add("password");
+
+        ArrayList<String> brokenLogin = new ArrayList<>();
+        brokenLogin.add("admin");
+        brokenLogin.add("admin");
+        brokenLogin.add("admin");
+
+        sendRequest(RequestTypes.LOGIN, workingLogin);
+        sendRequest(RequestTypes.LOGIN, wrongLogin);
+        sendRequest(RequestTypes.LOGIN, brokenLogin);
     }
 
-    public static void loginRequest() throws IOException, ClassNotFoundException {
+    public static void sendRequest(String requestType, ArrayList<String> parameters) throws IOException, ClassNotFoundException {
         // open a connection to the server
         Socket socket = new Socket("localhost", ServerConfig.getPort());
 
@@ -27,13 +42,8 @@ public class TestClient {
         OutputStream outputStream = socket.getOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(outputStream);
 
-        // change parameters for the request to test other types
-        ArrayList<String> parameters = new ArrayList<>();
-        parameters.add("admin");
-        parameters.add("admin");
-
         // change request type to test other types
-        Request request = new Request(RequestTypes.LOGIN, parameters);
+        Request request = new Request(requestType, parameters);
 
         oos.writeObject(request);
         oos.flush();
@@ -45,7 +55,7 @@ public class TestClient {
 
         Response response = (Response) ois.readObject();
         System.out.println(response.getStatusCode());
-        System.out.println((response.getContent()).toString());
+        System.out.println((response.getContent()).toString() + "\n");
 
         // close the streams
         oos.close();
