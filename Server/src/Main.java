@@ -1,6 +1,10 @@
 import Classes.Request;
+import Classes.Response;
 import Configs.ServerConfig;
+import Constants.RequestTypes;
+import Constants.StatusCodes;
 import Database.DBSetup;
+import Routes.Login;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,21 +37,28 @@ public class Main {
                 // listen for a client connection
                 Socket socket = serverSocket.accept();
 
-                // read the client's request
+                // instantiate objects for input and output
                 InputStream inputStream = socket.getInputStream();
                 ObjectInputStream ois = new ObjectInputStream(inputStream);
-
                 Request request = (Request) ois.readObject();
-
-                System.out.println("\nClient connected: " + socket.getInetAddress());
-                System.out.println("Client requested: " + request.getRequestType() + " with parameters: " + request.getRequestParameters().toString());
-
-                // write a response to the client
                 OutputStream outputStream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(outputStream);
 
+                // basic logging
+                System.out.println("\nClient connected: " + socket.getInetAddress());
+                System.out.println("Client requested: " + request.getRequestType() + " with parameters: " + request.getRequestParameters().toString());
+
+                // only for the TestClient --REMOVE LATER--
                 oos.writeObject("Request for: '" + request.getRequestType() + "' received");
                 oos.flush();
+
+                // test Login route here
+                if (request.getRequestType().equals(RequestTypes.LOGIN)) {
+                    Login.login(request.getRequestParameters(), oos);
+                } else {
+                    oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
+                    oos.flush();
+                }
 
                 // close the streams
                 ois.close();

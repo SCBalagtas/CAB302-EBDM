@@ -1,6 +1,10 @@
 package Routes;
 
+import Classes.Response;
+import Constants.StatusCodes;
 import Database.Users;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -36,5 +40,33 @@ public class Login {
             if (password.equals(userCredentials.get(1))) { return true; }
         }
         return false;
+    }
+
+    /**
+     * This is the method to handle the login request.
+     *
+     * @param parameters a string ArrayList of the parameters to authenticate the user.
+     * @param oos an ObjectOutputStream object to write a response to the client.
+     */
+    public static void login(ArrayList<String> parameters, ObjectOutputStream oos) throws IOException {
+        // check if correct number of parameters have been provided
+        if (parameters.size() != 2) {
+            oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
+        } else {
+            // get userName and password from parameters
+            String userName = parameters.get(0);
+            String password = parameters.get(1);
+
+            // write a response to the client depending on the result from authenticating the user credentials
+            if (authenticateUserCredentials(userName, password)) {
+                // generate session token here
+                // ...
+                oos.writeObject(new Response(StatusCodes.OK, "Login Successful"));
+            } else {
+                oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Username or Password Invalid"));
+            }
+        }
+        // flush oos
+        oos.flush();
     }
 }
