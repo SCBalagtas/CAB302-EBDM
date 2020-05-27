@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import static Classes.Utility.hasTokenExpired;
 
 /**
  * Author: Steven Balagtas
@@ -29,10 +30,15 @@ public class Logout {
         } else {
             // check if token from parameters is valid
             if (sessions.containsKey(parameters.get(0))) {
+                // check if the session token has expired
+                if (hasTokenExpired(sessions, parameters.get(0))) {
+                    oos.writeObject((new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request")));
+                } else {
+                    oos.writeObject((new Response(StatusCodes.OK, "Logout Successful")));
+                }
+
                 // delete this token from sessions
                 sessions.remove(parameters.get(0));
-
-                oos.writeObject((new Response(StatusCodes.OK, "Logout Successful")));
             } else {
                 oos.writeObject((new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request")));
             }
