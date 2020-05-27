@@ -6,7 +6,10 @@ import Database.Users;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Author: Steven Balagtas
@@ -43,12 +46,38 @@ public class Login {
     }
 
     /**
+     * Author: CAB302 Teaching Team
+     *
+     * Convert byte[] to string.
+     */
+    public static String bytesToString(byte[] bytes) {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (byte b : bytes) {
+            stringBuffer.append(String.format("%02x", b & 0xFF));
+        }
+        return stringBuffer.toString();
+    }
+
+    /**
+     * Author: CAB302 Teaching Team
+     *
+     * Generate a random session token.
+     */
+    private static String generateSessionToken() {
+        // generate a random string to use as the session token
+        Random rng = new Random();
+        byte[] tokenBytes = new byte[32];
+        rng.nextBytes(tokenBytes);
+        return bytesToString(tokenBytes);
+    }
+
+    /**
      * This is the method to handle the login request.
      *
      * @param parameters a string ArrayList of the parameters to authenticate the user.
      * @param oos an ObjectOutputStream object to write a response to the client.
      */
-    public static void login(ArrayList<String> parameters, ObjectOutputStream oos) throws IOException {
+    public static void login(ArrayList<String> parameters, HashMap<String, HashMap<String, LocalDateTime>> sessions, ObjectOutputStream oos) throws IOException {
         // check if correct number of parameters have been provided
         if (parameters.size() != 2) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
@@ -59,9 +88,17 @@ public class Login {
 
             // write a response to the client depending on the result from authenticating the user credentials
             if (authenticateUserCredentials(userName, password)) {
-                // generate session token here
-                // ...
-                oos.writeObject(new Response(StatusCodes.OK, "Login Successful"));
+                // create a new inner HashMap to store the session token and it's creation date and time
+                HashMap<String, LocalDateTime> userToken = new HashMap<>();
+
+                // generate session token and store it into userToken
+                String token = generateSessionToken();
+                userToken.put(token, LocalDateTime.now());
+
+                // store userToken into sessions
+                sessions.put(userName, userToken);
+
+                oos.writeObject(new Response(StatusCodes.OK, token));
             } else {
                 oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Username or Password Invalid"));
             }

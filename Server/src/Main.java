@@ -8,6 +8,8 @@ import Routes.Login;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 
 /**
  * Author: Steven Balagtas
@@ -26,6 +28,9 @@ public class Main {
             System.out.println("Terminating server now...");
             System.exit(0);
         }
+
+        // instantiate a new session HashMap
+        HashMap<String, HashMap<String, LocalDateTime>> sessions = new HashMap<>();
 
         // initialise and run the server
         try {
@@ -54,7 +59,7 @@ public class Main {
 
                 // test Login route here
                 if (request.getRequestType().equals(RequestTypes.LOGIN)) {
-                    Login.login(request.getRequestParameters(), oos);
+                    Login.login(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();
