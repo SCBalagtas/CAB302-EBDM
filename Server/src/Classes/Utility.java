@@ -1,5 +1,8 @@
 package Classes;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -40,4 +43,14 @@ public class Utility {
      *
      * @return true if the session token has expired.
      */
+    public static boolean hasTokenExpired(HashMap<String, ArrayList<String>> sessions, String token) {
+        // get the expiry date and time of the token
+        LocalDateTime tokenExpiryDateTime = LocalDateTime.parse(sessions.get(token).get(1));
+
+        // check if the token has expired
+        if (LocalDateTime.now().isAfter(tokenExpiryDateTime)) {
+            return true;
+        }
+        return false;
+    }
 }
