@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
+import static Classes.Utility.generateSessionToken;
 
 /**
  * Author: Steven Balagtas
@@ -43,32 +43,6 @@ public class Login {
             if (password.equals(userCredentials.get(1))) { return true; }
         }
         return false;
-    }
-
-    /**
-     * Author: CAB302 Teaching Team
-     *
-     * Convert byte[] to string.
-     */
-    public static String bytesToString(byte[] bytes) {
-        StringBuffer stringBuffer = new StringBuffer();
-        for (byte b : bytes) {
-            stringBuffer.append(String.format("%02x", b & 0xFF));
-        }
-        return stringBuffer.toString();
-    }
-
-    /**
-     * Author: CAB302 Teaching Team
-     *
-     * Generate a random session token.
-     */
-    private static String generateSessionToken() {
-        // generate a random string to use as the session token
-        Random rng = new Random();
-        byte[] tokenBytes = new byte[32];
-        rng.nextBytes(tokenBytes);
-        return bytesToString(tokenBytes);
     }
 
     /**
