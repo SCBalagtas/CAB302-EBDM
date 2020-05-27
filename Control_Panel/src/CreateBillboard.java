@@ -1,152 +1,180 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreateBillboard extends JFrame implements Runnable {
-    private int WIDTH = 1280;
-    private int HEIGHT = 720;
+    private String BBAuthor;
+    private String BBName;
+    private String BBMsg;
+    private String BBImgUrl;
+    private String BBImgData;
+    private String BBInfo;
 
     public CreateBillboard(String title) throws HeadlessException {
         super(title);
     }
 
-    private void createGUI() throws ClassNotFoundException,
-            UnsupportedLookAndFeelException,
-            InstantiationException,
-            IllegalAccessException {
-
+    private void CreateGUI() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         setVisible(true);
-        setMinimumSize(new Dimension(WIDTH, HEIGHT));
+        setMinimumSize(new Dimension(1280, 720));
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-        //mainPanel
-        JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(Color.GREEN);
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
+
+        JPanel previewPanel = new JPanel();
+        previewPanel.setLayout(new BorderLayout());
+
+        JPanel mainJPanel = new JPanel();
+        mainJPanel.setLayout(new GridBagLayout());
+
+        JPanel submitBtnPanel = new JPanel();
+        submitBtnPanel.setLayout(new GridBagLayout());
+
+        previewPanel.setBackground(Color.BLUE);
+        mainJPanel.setBackground(Color.RED);
+        submitBtnPanel.setBackground(Color.GREEN);
+
+        getContentPane().add(previewPanel, BorderLayout.NORTH);
+        getContentPane().add(mainJPanel, BorderLayout.CENTER);
+        getContentPane().add(submitBtnPanel, BorderLayout.SOUTH);
 
         GridBagConstraints gbCons = new GridBagConstraints();
 
-        /// Swing components
+        // Preview Panel Widgets:
+        JLabel bbPreviewLbl = new JLabel("Preview:");
+        previewPanel.add(bbPreviewLbl, BorderLayout.CENTER);
 
-        // XML Preview
-        // Import XML Button
-        // Export XML Button
-        // Background Colour
-        // Message Colour
-        // Information Colour
+        JTextArea bbPreview = new JTextArea("XML Preview...");
+        previewPanel.add(bbPreview, BorderLayout.CENTER);
+
+        // Main Panel Widgets:
+        // Billboard Author
+        JLabel bbAuthorLbl = new JLabel("Author:");
+        gbCons.fill = GridBagConstraints.HORIZONTAL;
+        gbCons.gridx = 0;
+        gbCons.gridy = 0;
+        mainJPanel.add(bbAuthorLbl, gbCons);
+
+        JLabel bbAuthor = new JLabel("Test Author");
+        gbCons.fill = GridBagConstraints.HORIZONTAL;
+        gbCons.gridx = 1;
+        gbCons.gridy = 0;
+        mainJPanel.add(bbAuthor, gbCons);
+
+        // Import and Export Buttons
+        JButton bbImportBtn = new JButton("Import");
+        gbCons.fill = GridBagConstraints.HORIZONTAL;
+        gbCons.gridx = 0;
+        gbCons.gridy = 1;
+        mainJPanel.add(bbImportBtn, gbCons);
+
+        JButton bbExportBtn = new JButton("Export");
+        gbCons.fill = GridBagConstraints.HORIZONTAL;
+        gbCons.gridx = 1;
+        gbCons.gridy = 1;
+        mainJPanel.add(bbExportBtn, gbCons);
 
         // Billboard Name
         // label
-        JLabel bbNameLabel = new JLabel("Name:");
+        JLabel bbNameLbl = new JLabel("Name:");
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 0;
         gbCons.gridy = 2;
-        this.getContentPane().add(bbNameLabel, gbCons);
+        mainJPanel.add(bbNameLbl, gbCons);
 
         // text field
-        JTextField bbName = new JTextField(20);
+        JTextField bbNameTf = new JTextField(20);
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 1;
         gbCons.gridy = 2;
-        this.getContentPane().add(bbName, gbCons);
+        mainJPanel.add(bbNameTf, gbCons);
 
-        // Message Text
+        // Billboard Message
         // label
-        JLabel bbMsgLabel = new JLabel("Message:");
+        JLabel bbMsgLbl = new JLabel("Message:");
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 0;
         gbCons.gridy = 3;
-        this.getContentPane().add(bbMsgLabel, gbCons);
+        mainJPanel.add(bbMsgLbl, gbCons);
 
         // text field
-        JTextField bbMsg = new JTextField(20);
+        JTextField bbMsgTf = new JTextField(20);
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 1;
         gbCons.gridy = 3;
-        this.getContentPane().add(bbMsg, gbCons);
+        mainJPanel.add(bbMsgTf, gbCons);
 
-        // Picture URL/DATA
+        // Billboard Picture (URL)
         // label
-        JLabel bbImgLabel = new JLabel("URL:");
+        JLabel bbPicUrlLbl = new JLabel("Image Url:");
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 0;
         gbCons.gridy = 4;
-        this.getContentPane().add(bbImgLabel, gbCons);
+        mainJPanel.add(bbPicUrlLbl, gbCons);
 
         // text field
-        JTextField bbImg = new JTextField(20);
+        JTextField bbPicUrlTf = new JTextField(20);
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 1;
         gbCons.gridy = 4;
-        this.getContentPane().add(bbImg, gbCons);
+        mainJPanel.add(bbPicUrlTf, gbCons);
 
-        // Information Text
+        // Billboard Picture (URL)
         // label
-        JLabel bbInfoLabel = new JLabel("Information:");
+        JLabel bbInfoLbl = new JLabel("Information:");
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 0;
         gbCons.gridy = 5;
-        this.getContentPane().add(bbInfoLabel, gbCons);
+        mainJPanel.add(bbInfoLbl, gbCons);
 
         // text field
-        JTextField bbInfo = new JTextField(20);
+        JTextField bbInfoTf = new JTextField(20);
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 1;
         gbCons.gridy = 5;
-        this.getContentPane().add(bbInfo, gbCons);
+        mainJPanel.add(bbInfoTf, gbCons);
 
-        // Create Button
-        JButton createBtn = new JButton("Create Billboard");
-        gbCons.fill = GridBagConstraints.HORIZONTAL;
-        gbCons.gridx = 1;
-        gbCons.gridy = 6;
-        this.getContentPane().add(createBtn, gbCons);
-
-        // Cancel Button
-        JButton cancelBtn = new JButton("Cancel");
+        // Submit Panel Widgets:
+        // Create and Cancel Buttons
+        JButton bbCancelBtn = new JButton("Cancel");
         gbCons.fill = GridBagConstraints.HORIZONTAL;
         gbCons.gridx = 0;
-        gbCons.gridy = 6;
-        this.getContentPane().add(cancelBtn, gbCons);
+        gbCons.gridy = 0;
+        submitBtnPanel.add(bbCancelBtn, gbCons);
 
-        JButton btnClose = new JButton("Close");
-        gbCons.fill = GridBagConstraints.HORIZONTAL;
-        gbCons.gridx = 0;
-        gbCons.gridy = 7;
-        this.getContentPane().add(btnClose, gbCons);
-
-        createBtn.addActionListener(e -> {
-            String bbNameValue = bbName.getText();
-            String bbMsgValue = bbMsg.getText();
-            String bbImgValue = bbImg.getText();
-            String bbInfoValue = bbInfo.getText();
-
-            System.out.println(String.format("Creating Billboard...\n" +
-                    "Name: %s\n" +
-                    "Message: %s\n" +
-                    "Image: %s\n" +
-                    "Info: %s\n", bbNameValue, bbMsgValue, bbImgValue, bbInfoValue));
-
-            this.dispose();
+        bbCancelBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                JButton sourceJButton = (JButton) source;
+                System.out.println(sourceJButton.getText());
+                dispose();
+            }
         });
 
-        cancelBtn.addActionListener(e -> {
-            bbName.setText("");
-            bbMsg.setText("");
-            bbImg.setText("");
-            bbInfo.setText("");
+        JButton bbCreateBtn = new JButton("Create Billboard");
+        gbCons.fill = GridBagConstraints.HORIZONTAL;
+        gbCons.gridx = 1;
+        gbCons.gridy = 0;
+        submitBtnPanel.add(bbCreateBtn, gbCons);
 
-            System.out.println("Create Billboard Cancelled!");
-
-            this.dispose();
+        bbCreateBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                JButton sourceJButton = (JButton) source;
+                System.out.println(sourceJButton.getText());
+                dispose();
+            }
         });
     }
 
     @Override
     public void run() {
         try {
-            createGUI();
+            CreateGUI();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedLookAndFeelException e) {
@@ -158,8 +186,9 @@ public class CreateBillboard extends JFrame implements Runnable {
         }
     }
 
-    public static void main() {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(new CreateBillboard("Create Billboard"));
     }
-
 }
+
+
