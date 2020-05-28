@@ -2,7 +2,6 @@ package Routes;
 
 import Classes.Response;
 import Constants.StatusCodes;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -32,15 +31,15 @@ public class Logout {
             if (sessions.containsKey(parameters.get(0))) {
                 // check if the session token has expired
                 if (hasTokenExpired(sessions, parameters.get(0))) {
-                    oos.writeObject((new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request")));
+                    oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
                 } else {
-                    oos.writeObject((new Response(StatusCodes.OK, "Logout Successful")));
+                    oos.writeObject(new Response(StatusCodes.OK, "Logout Successful"));
                 }
 
                 // delete this token from sessions
                 sessions.remove(parameters.get(0));
             } else {
-                oos.writeObject((new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request")));
+                oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
             }
         }
         // flush oos

@@ -34,6 +34,28 @@ public class TestClient {
         sendRequest(RequestTypes.LOGIN, wrongLogin);
         sendRequest(RequestTypes.LOGIN, brokenLogin);
 
+        // create new user request tests
+        ArrayList<String> workingCreateUser = new ArrayList<>();
+        workingCreateUser.add("testUser1");
+        workingCreateUser.add("{1}");
+        workingCreateUser.add("password");
+        workingCreateUser.add(token);
+
+        ArrayList<String> wrongCreateUser = new ArrayList<>();
+        wrongCreateUser.add("testUser1");
+        wrongCreateUser.add("{1}");
+        wrongCreateUser.add("password");
+        wrongCreateUser.add("Fake Token");
+
+        ArrayList<String> brokenCreateUser = new ArrayList<>();
+        brokenCreateUser.add("testUser1");
+        brokenCreateUser.add("{1}");
+        brokenCreateUser.add("password");
+
+        sendRequest(RequestTypes.CREATE_USER, workingCreateUser);
+        sendRequest(RequestTypes.CREATE_USER, wrongCreateUser);
+        sendRequest(RequestTypes.CREATE_USER, brokenCreateUser);
+
         // logout request tests
         ArrayList<String> workingLogout = new ArrayList<>();
         workingLogout.add(token);
