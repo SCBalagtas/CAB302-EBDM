@@ -44,10 +44,10 @@ public class DBSetup {
         String createBillboards = "CREATE TABLE IF NOT EXISTS billboards "
                 + "(billboardName   VARCHAR(255) PRIMARY KEY, "
                 + "content          TEXT NOT NULL, "
-                + "creator          VARCHAR(50) NOT NULL, "
+                + "creator          VARCHAR(50), "
                 + "creationDate DATETIME DEFAULT NOW(), "
                 + "updatedAt    DATETIME DEFAULT NOW() ON UPDATE NOW(), "
-                + "FOREIGN KEY (creator) REFERENCES users(userName))";
+                + "FOREIGN KEY (creator) REFERENCES users(userName) ON DELETE SET NULL)";
 
         // execute create table statement
         statement.execute(createBillboards);
@@ -67,13 +67,13 @@ public class DBSetup {
         String createSchedules = "CREATE TABLE IF NOT EXISTS schedules "
                 + "(scheduleId      INT PRIMARY KEY AUTO_INCREMENT, "
                 + "billboardName    VARCHAR(255) NOT NULL, "
-                + "scheduledBy      VARCHAR(50) NOT NULL, "
+                + "scheduledBy      VARCHAR(50), "
                 + "schedule         DATETIME NOT NULL, "
                 + "duration         INT NOT NULL, "
                 + "freqType         ENUM ('Daily', 'Hourly', 'Minutes') DEFAULT NULL, "
                 + "freqInterval     INT DEFAULT NULL, "
                 + "FOREIGN KEY (billboardName) REFERENCES billboards(billboardName), "
-                + "FOREIGN KEY (scheduledBy) REFERENCES users(userName))";
+                + "FOREIGN KEY (scheduledBy) REFERENCES users(userName) ON DELETE SET NULL)";
 
         // execute create table statement
         statement.execute(createSchedules);
