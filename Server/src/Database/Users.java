@@ -179,7 +179,7 @@ public class Users {
     /**
      * Set a new password for a particular user in the users table.
      *
-     * @param userName of the user who's password will be changed.
+     * @param userName of the user whose password will be changed.
      * @param password that will be set.
      * @return true if the update operation was successful.
      */
@@ -212,5 +212,45 @@ public class Users {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    /**
+     * Get a user's permissions.
+     *
+     * @param userName of the user whose permissions will be retrieved.
+     * @return an int ArrayList containing the user's permissions.
+     * If userName does not exist in the database, empty ArrayList will be returned.
+     */
+    public static ArrayList<Integer> getUserPermissionsFromDB(String userName) {
+        // string ArrayList to store the user's permissions in
+        ArrayList<Integer> userPermissions = new ArrayList<>();
+
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT permissionId FROM userPermissions WHERE userName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, userName);
+            ResultSet resultSet = statement.executeQuery();
+
+            // add the user's credentials to userCredentials if result set is not empty
+            while (resultSet.next()) {
+                userPermissions.add((resultSet.getInt("permissionId")));
+            }
+
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            // return userCredentials
+            return userPermissions;
+        }
+        // return userCredentials
+        return userPermissions;
     }
 }

@@ -56,6 +56,22 @@ public class TestClient {
         sendRequest(RequestTypes.CREATE_USER, wrongCreateUser);
         sendRequest(RequestTypes.CREATE_USER, brokenCreateUser);
 
+        // get user permissions request tests
+        ArrayList<String> workingGetPermissions = new ArrayList<>();
+        workingGetPermissions.add("testUser1");
+        workingGetPermissions.add(token);
+
+        ArrayList<String> wrongGetPermissions = new ArrayList<>();
+        wrongGetPermissions.add("testUser1");
+        wrongGetPermissions.add("Fake Token");
+
+        ArrayList<String> brokenGetPermissions = new ArrayList<>();
+        brokenGetPermissions.add("testUser1");
+
+        sendRequest(RequestTypes.GET_PERMISSIONS, workingGetPermissions);
+        sendRequest(RequestTypes.GET_PERMISSIONS, wrongGetPermissions);
+        sendRequest(RequestTypes.GET_PERMISSIONS, brokenGetPermissions);
+
         // set user password request tests
         ArrayList<String> workingSetOwnPassword = new ArrayList<>();
         workingSetOwnPassword.add("admin");

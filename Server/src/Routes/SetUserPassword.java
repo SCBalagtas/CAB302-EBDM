@@ -21,7 +21,7 @@ public class SetUserPassword {
     /**
      * This is the method to handle the set user password request.
      *
-     * @param parameters a string ArrayList of the userName of the user who's password will be changed, the new password and valid session token.
+     * @param parameters a string ArrayList of the userName of the user who's password will be changed, the new password and a valid session token.
      * @param sessions a HashMap of the active session tokens for the server.
      * @param oos an ObjectOutputStream object to write a response to the client.
      */

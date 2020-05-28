@@ -68,6 +68,8 @@ public class Main {
                     DeleteUser.deleteUser(request.getRequestParameters(), sessions, oos);
                 } else if (request.getRequestType().equals(RequestTypes.SET_PASSWORD)) {
                     SetUserPassword.setUserPassword(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.GET_PERMISSIONS)) {
+                    GetUserPermissions.getUserPermissions(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();
