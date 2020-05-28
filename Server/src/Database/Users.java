@@ -145,6 +145,7 @@ public class Users {
      * Delete user from the users table.
      *
      * @param userName of user to be deleted.
+     * @return true if the delete operation was successful.
      */
     public static boolean deleteUserFromDB(String userName) {
         // try to delete the user from the users table
@@ -165,6 +166,44 @@ public class Users {
 
                 return true;
             }
+            // close statement and connection object
+            statement.close();
+            connection.close();
+
+            return false;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Set a new password for a particular user in the users table.
+     *
+     * @param userName of the user who's password will be changed.
+     * @param password that will be set.
+     * @return true if the update operation was successful.
+     */
+    public static boolean setUserPasswordInDB(String userName, String password) {
+        // try to update the user's password from the users table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE users SET password=? WHERE userName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, password);
+            statement.setString(2, userName);
+
+            // if affected rows != 0 return true
+            if (statement.executeUpdate() != 0) {
+                // close statement and connection object
+                statement.close();
+                connection.close();
+
+                return true;
+            }
+
             // close statement and connection object
             statement.close();
             connection.close();

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Author: Steven Balagtas
  *
- * A simple test client class to test the server responses.
+ * A simple test client class to test the server responses. Comment out the necessary tests to view test results.
  */
 
 public class TestClient {
@@ -55,6 +55,31 @@ public class TestClient {
         sendRequest(RequestTypes.CREATE_USER, workingCreateUser);
         sendRequest(RequestTypes.CREATE_USER, wrongCreateUser);
         sendRequest(RequestTypes.CREATE_USER, brokenCreateUser);
+
+        // set user password request tests
+        ArrayList<String> workingSetOwnPassword = new ArrayList<>();
+        workingSetOwnPassword.add("admin");
+        workingSetOwnPassword.add("admin");
+        workingSetOwnPassword.add(token);
+
+        ArrayList<String> workingSetUserPassword = new ArrayList<>();
+        workingSetUserPassword.add("testUser1");
+        workingSetUserPassword.add("password123");
+        workingSetUserPassword.add(token);
+
+        ArrayList<String> wrongSetUserPassword = new ArrayList<>();
+        wrongSetUserPassword.add("testUser1");
+        wrongSetUserPassword.add("password123");
+        wrongSetUserPassword.add("Fake Token");
+
+        ArrayList<String> brokenSetUserPassword = new ArrayList<>();
+        brokenSetUserPassword.add("testUser1");
+        brokenSetUserPassword.add("password123");
+
+        sendRequest(RequestTypes.SET_PASSWORD, workingSetOwnPassword);
+        sendRequest(RequestTypes.SET_PASSWORD, workingSetUserPassword);
+        sendRequest(RequestTypes.SET_PASSWORD, wrongSetUserPassword);
+        sendRequest(RequestTypes.SET_PASSWORD, brokenSetUserPassword);
 
         // delete user request tests
         ArrayList<String> workingDeleteUser = new ArrayList<>();

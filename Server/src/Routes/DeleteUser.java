@@ -4,7 +4,6 @@ import Classes.Response;
 import Constants.ServerPermissions;
 import Constants.StatusCodes;
 import Database.Users;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class DeleteUser {
     /**
      * This is the method to handle the delete user request.
      *
-     * @param parameters a string ArrayList of the of the userName of the user to delete and a valid session token.
+     * @param parameters a string ArrayList of the userName of the user to delete and a valid session token.
      * @param sessions a HashMap of the active session tokens for the server.
      * @param oos an ObjectOutputStream object to write a response to the client.
      */
