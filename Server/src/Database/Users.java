@@ -53,7 +53,7 @@ public class Users {
     }
 
     /**
-     * Inserts a new user into the user table.
+     * Inserts a new user into the users table.
      *
      * @param userName of the new user.
      * @param permissions of the new user.
@@ -131,6 +131,40 @@ public class Users {
             // close result set
             resultSet.close();
 
+            // close statement and connection object
+            statement.close();
+            connection.close();
+
+            return false;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Delete user from the users table.
+     *
+     * @param userName of user to be deleted.
+     */
+    public static boolean deleteUserFromDB(String userName) {
+        // try to delete the user from the users table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM users WHERE userName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, userName);
+
+            // if affected rows != 0 return true
+            if (statement.executeUpdate() != 0) {
+                // close statement and connection object
+                statement.close();
+                connection.close();
+
+                return true;
+            }
             // close statement and connection object
             statement.close();
             connection.close();

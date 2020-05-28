@@ -4,44 +4,51 @@ import Classes.Response;
 import Constants.ServerPermissions;
 import Constants.StatusCodes;
 import Database.Users;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import static Classes.Utility.hasTokenExpired;
 
 /**
  * Author: Steven Balagtas
  *
- * Class of static methods to handle create user requests.
+ * Class of static methods to handle delete user requests.
  */
 
-public class CreateUser {
+public class DeleteUser {
     /**
-     * This is the method to handle the create user request.
+     * This is the method to handle the delete user request.
      *
-     * @param parameters a string ArrayList of the parameters to create the new user.
+     * @param parameters a string ArrayList of the of the userName of the user to delete and a valid session token.
      * @param sessions a HashMap of the active session tokens for the server.
      * @param oos an ObjectOutputStream object to write a response to the client.
      */
-    public static void createUser(ArrayList<String> parameters, HashMap<String, ArrayList<String>> sessions, ObjectOutputStream oos) throws IOException {
+    public static void deleteUser(ArrayList<String> parameters, HashMap<String, ArrayList<String>> sessions, ObjectOutputStream oos) throws IOException {
         // check if correct number of parameters have been provided
-        if (parameters.size() != 4) {
+        if (parameters.size() != 2) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
         } else {
             // check if token from parameters is valid
-            if (sessions.containsKey(parameters.get(3))) {
+            if (sessions.containsKey(parameters.get(1))) {
                 // check if the session token has expired
-                if (hasTokenExpired(sessions, parameters.get(3))) {
+                if (hasTokenExpired(sessions, parameters.get(1))) {
                     oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
                 } else {
                     // check if the user has the "Edit Users" permission
-                    if (Users.userHasPermission(sessions.get(parameters.get(3)).get(0), ServerPermissions.EDIT_USERS)) {
-                        // try to create the new user
-                        if (Users.insertNewUser(parameters.get(0), parameters.get(1), parameters.get(2))) {
-                            oos.writeObject(new Response(StatusCodes.CREATED, "User Creation Successful"));
+                    if (Users.userHasPermission(sessions.get(parameters.get(1)).get(0), ServerPermissions.EDIT_USERS)) {
+                        // check if the user is trying to delete themselves
+                        if (parameters.get(0).equals(sessions.get(parameters.get(1)).get(0))) {
+                            oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Users Cannot Delete Themselves"));
                         } else {
-                            oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Creation Unsuccessful"));
+                            // delete user
+                            if (Users.deleteUserFromDB(parameters.get(0))) {
+                                oos.writeObject(new Response(StatusCodes.OK, "User Deletion Successful"));
+                            } else {
+                                oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Deletion Unsuccessful"));
+                            }
                         }
                     } else {
                         oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));

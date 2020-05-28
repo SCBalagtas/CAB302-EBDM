@@ -56,6 +56,22 @@ public class TestClient {
         sendRequest(RequestTypes.CREATE_USER, wrongCreateUser);
         sendRequest(RequestTypes.CREATE_USER, brokenCreateUser);
 
+        // delete user request tests
+        ArrayList<String> workingDeleteUser = new ArrayList<>();
+        workingDeleteUser.add("testUser1");
+        workingDeleteUser.add(token);
+
+        ArrayList<String> wrongDeleteUser = new ArrayList<>();
+        wrongDeleteUser.add("admin");
+        wrongDeleteUser.add(token);
+
+        ArrayList<String> brokenDeleteUser = new ArrayList<>();
+        brokenDeleteUser.add("testUser1");
+
+        sendRequest(RequestTypes.DELETE_USER, workingDeleteUser);
+        sendRequest(RequestTypes.DELETE_USER, wrongDeleteUser);
+        sendRequest(RequestTypes.DELETE_USER, brokenDeleteUser);
+
         // logout request tests
         ArrayList<String> workingLogout = new ArrayList<>();
         workingLogout.add(token);

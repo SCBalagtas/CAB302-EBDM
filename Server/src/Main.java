@@ -5,6 +5,7 @@ import Constants.RequestTypes;
 import Constants.StatusCodes;
 import Database.DBSetup;
 import Routes.CreateUser;
+import Routes.DeleteUser;
 import Routes.Login;
 import Routes.Logout;
 import java.io.*;
@@ -66,6 +67,8 @@ public class Main {
                     Logout.logout(request.getRequestParameters(), sessions, oos);
                 } else if (request.getRequestType().equals(RequestTypes.CREATE_USER)) {
                     CreateUser.createUser(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.DELETE_USER)) {
+                    DeleteUser.deleteUser(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();

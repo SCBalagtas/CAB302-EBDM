@@ -113,7 +113,7 @@ public class DBSetup {
                 + "(userName        VARCHAR(50), "
                 + "permissionId     INT, "
                 + "PRIMARY KEY (userName, permissionId), "
-                + "FOREIGN KEY (userName) REFERENCES users(userName), "
+                + "FOREIGN KEY (userName) REFERENCES users(userName) ON DELETE CASCADE, "
                 + "FOREIGN KEY (permissionId) REFERENCES permissions(permissionId))";
 
         // execute create table statement
