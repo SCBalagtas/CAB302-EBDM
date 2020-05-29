@@ -56,6 +56,21 @@ public class TestClient {
         sendRequest(RequestTypes.CREATE_USER, wrongCreateUser);
         sendRequest(RequestTypes.CREATE_USER, brokenCreateUser);
 
+        // list users request tests
+        ArrayList<String> workingListUsers = new ArrayList<>();
+        workingListUsers.add(token);
+
+        ArrayList<String> wrongListUsers = new ArrayList<>();
+        wrongListUsers.add("Fake Token");
+
+        ArrayList<String> brokenListUsers = new ArrayList<>();
+        brokenListUsers.add("Fake Token");
+        brokenListUsers.add("admin");
+
+        sendRequest(RequestTypes.LIST_USERS, workingListUsers);
+        sendRequest(RequestTypes.LIST_USERS, wrongListUsers);
+        sendRequest(RequestTypes.LIST_USERS, brokenListUsers);
+
         // get user permissions request tests
         ArrayList<String> workingGetPermissions = new ArrayList<>();
         workingGetPermissions.add("testUser1");

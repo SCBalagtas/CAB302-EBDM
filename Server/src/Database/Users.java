@@ -1,9 +1,6 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -223,7 +220,7 @@ public class Users {
      * If userName does not exist in the database, empty ArrayList will be returned.
      */
     public static ArrayList<Integer> getUserPermissionsFromDB(String userName) {
-        // string ArrayList to store the user's permissions in
+        // int ArrayList to store the user's permissions in
         ArrayList<Integer> userPermissions = new ArrayList<>();
 
         try {
@@ -295,5 +292,39 @@ public class Users {
         } catch (SQLException e) {
             System.err.println(e);
         }
+    }
+
+    /**
+     * Get all the userNames from the users table.
+     *
+     * @return a string ArrayList of all the userNames in the users table.
+     */
+    public static ArrayList<String> getUsers() {
+        // string ArrayList to store the userNames of all the users in the users table
+        ArrayList<String> userNames = new ArrayList<>();
+
+        // try to get all the userNames from the users table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT userName FROM users");
+
+            // add the user's userName into userNames if result set is not empty
+            while (resultSet.next()) {
+                userNames.add(resultSet.getString("userName"));
+            }
+
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        // return userNames
+        return userNames;
     }
 }
