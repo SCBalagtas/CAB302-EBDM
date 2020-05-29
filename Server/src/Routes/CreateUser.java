@@ -29,23 +29,18 @@ public class CreateUser {
         if (parameters.size() != 4) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
         } else {
-            // check if token from parameters is valid
-            if (sessions.containsKey(parameters.get(3))) {
-                // check if the session token has expired
-                if (hasTokenExpired(sessions, parameters.get(3))) {
-                    oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
-                } else {
-                    // check if the user has the "Edit Users" permission
-                    if (Users.userHasPermission(sessions.get(parameters.get(3)).get(0), ServerPermissions.EDIT_USERS)) {
-                        // try to create the new user
-                        if (Users.insertNewUser(parameters.get(0), parameters.get(1), parameters.get(2))) {
-                            oos.writeObject(new Response(StatusCodes.CREATED, "User Creation Successful"));
-                        } else {
-                            oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Creation Unsuccessful"));
-                        }
+            // check if token from parameters is valid and if session token has not yet expired
+            if (sessions.containsKey(parameters.get(3)) && !hasTokenExpired(sessions, parameters.get(3))) {
+                // check if the user has the "Edit Users" permission
+                if (Users.userHasPermission(sessions.get(parameters.get(3)).get(0), ServerPermissions.EDIT_USERS)) {
+                    // try to create the new user
+                    if (Users.insertNewUser(parameters.get(0), parameters.get(1), parameters.get(2))) {
+                        oos.writeObject(new Response(StatusCodes.CREATED, "User Creation Successful"));
                     } else {
-                        oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
+                        oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Creation Unsuccessful"));
                     }
+                } else {
+                    oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
                 }
             } else {
                 oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));

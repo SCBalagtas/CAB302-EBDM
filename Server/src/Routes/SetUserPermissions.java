@@ -32,35 +32,30 @@ public class SetUserPermissions {
         if (parameters.size() != 3) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
         } else {
-            // check if token from parameters is valid
-            if (sessions.containsKey(parameters.get(2))) {
-                // check if the session token has expired
-                if (hasTokenExpired(sessions, parameters.get(2))) {
-                    oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
-                } else {
-                    // check if the user has the "Edit Users" permission
-                    if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.EDIT_USERS)) {
-                        // check if user is trying to change their own permissions, users can't remove their own "Edit Users" permission.
-                        if (parameters.get(0).equals(sessions.get(parameters.get(2)).get(0))) {
-                            // convert permissions string from parameters into a list
-                            List<String> permissionsList = Arrays.asList(parameters.get(1).substring(1, parameters.get(1).length() - 1).split(", "));
+            // check if token from parameters is valid and if session token has not yet expired
+            if (sessions.containsKey(parameters.get(2)) && !hasTokenExpired(sessions, parameters.get(2))) {
+                // check if the user has the "Edit Users" permission
+                if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.EDIT_USERS)) {
+                    // check if user is trying to change their own permissions, users can't remove their own "Edit Users" permission.
+                    if (parameters.get(0).equals(sessions.get(parameters.get(2)).get(0))) {
+                        // convert permissions string from parameters into a list
+                        List<String> permissionsList = Arrays.asList(parameters.get(1).substring(1, parameters.get(1).length() - 1).split(", "));
 
-                            // if the new set of permissions contains the "Edit Users" permission set the new permissions, else cancel the operation
-                            if (permissionsList.contains(Integer.toString(ServerPermissions.EDIT_USERS))) {
-                                // set the new permissions
-                                Users.setPermissionsInDB(parameters.get(0), parameters.get(1));
-                                oos.writeObject(new Response(StatusCodes.OK, "New Permissions Set"));
-                            } else {
-                                oos.writeObject(new Response(StatusCodes.FORBIDDEN, "User attempted to remove their own 'Edit Users' permission"));
-                            }
-                        } else {
+                        // if the new set of permissions contains the "Edit Users" permission set the new permissions, else cancel the operation
+                        if (permissionsList.contains(Integer.toString(ServerPermissions.EDIT_USERS))) {
                             // set the new permissions
                             Users.setPermissionsInDB(parameters.get(0), parameters.get(1));
                             oos.writeObject(new Response(StatusCodes.OK, "New Permissions Set"));
+                        } else {
+                            oos.writeObject(new Response(StatusCodes.FORBIDDEN, "User attempted to remove their own 'Edit Users' permission"));
                         }
                     } else {
-                        oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
+                        // set the new permissions
+                        Users.setPermissionsInDB(parameters.get(0), parameters.get(1));
+                        oos.writeObject(new Response(StatusCodes.OK, "New Permissions Set"));
                     }
+                } else {
+                    oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
                 }
             } else {
                 oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));

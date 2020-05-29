@@ -30,14 +30,19 @@ public class SetUserPassword {
         if (parameters.size() != 3) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
         } else {
-            // check if token from parameters is valid
-            if (sessions.containsKey(parameters.get(2))) {
-                // check if the session token has expired
-                if (hasTokenExpired(sessions, parameters.get(2))) {
-                    oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
+            // check if token from parameters is valid and if session token has not yet expired
+            if (sessions.containsKey(parameters.get(2)) && !hasTokenExpired(sessions, parameters.get(2))) {
+                // check if user is attempting to change their own password
+                if (parameters.get(0).equals(sessions.get(parameters.get(2)).get(0))) {
+                    // set the new password
+                    if (Users.setUserPasswordInDB(parameters.get(0), parameters.get(1))) {
+                        oos.writeObject(new Response(StatusCodes.OK, "New Password Set"));
+                    } else {
+                        oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "New Password Not Set"));
+                    }
                 } else {
-                    // check if user is attempting to change their own password
-                    if (parameters.get(0).equals(sessions.get(parameters.get(2)).get(0))) {
+                    // check if the user has the "Edit Users" permission
+                    if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.EDIT_USERS)) {
                         // set the new password
                         if (Users.setUserPasswordInDB(parameters.get(0), parameters.get(1))) {
                             oos.writeObject(new Response(StatusCodes.OK, "New Password Set"));
@@ -45,17 +50,7 @@ public class SetUserPassword {
                             oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "New Password Not Set"));
                         }
                     } else {
-                        // check if the user has the "Edit Users" permission
-                        if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.EDIT_USERS)) {
-                            // set the new password
-                            if (Users.setUserPasswordInDB(parameters.get(0), parameters.get(1))) {
-                                oos.writeObject(new Response(StatusCodes.OK, "New Password Set"));
-                            } else {
-                                oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "New Password Not Set"));
-                            }
-                        } else {
-                            oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
-                        }
+                        oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
                     }
                 }
             } else {

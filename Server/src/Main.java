@@ -72,6 +72,8 @@ public class Main {
                     GetUserPermissions.getUserPermissions(request.getRequestParameters(), sessions, oos);
                 } else if (request.getRequestType().equals(RequestTypes.SET_PERMISSIONS)) {
                     SetUserPermissions.setUserPermissions(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.LIST_USERS)) {
+                    ListUsers.listUsers(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();

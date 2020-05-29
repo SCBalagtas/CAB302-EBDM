@@ -30,28 +30,23 @@ public class DeleteUser {
         if (parameters.size() != 2) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
         } else {
-            // check if token from parameters is valid
-            if (sessions.containsKey(parameters.get(1))) {
-                // check if the session token has expired
-                if (hasTokenExpired(sessions, parameters.get(1))) {
-                    oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
-                } else {
-                    // check if the user has the "Edit Users" permission
-                    if (Users.userHasPermission(sessions.get(parameters.get(1)).get(0), ServerPermissions.EDIT_USERS)) {
-                        // check if the user is trying to delete themselves
-                        if (parameters.get(0).equals(sessions.get(parameters.get(1)).get(0))) {
-                            oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Users Cannot Delete Themselves"));
-                        } else {
-                            // delete user
-                            if (Users.deleteUserFromDB(parameters.get(0))) {
-                                oos.writeObject(new Response(StatusCodes.OK, "User Deletion Successful"));
-                            } else {
-                                oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Deletion Unsuccessful"));
-                            }
-                        }
+            // check if token from parameters is valid and if session token has not yet expired
+            if (sessions.containsKey(parameters.get(1)) && !hasTokenExpired(sessions, parameters.get(1))) {
+                // check if the user has the "Edit Users" permission
+                if (Users.userHasPermission(sessions.get(parameters.get(1)).get(0), ServerPermissions.EDIT_USERS)) {
+                    // check if the user is trying to delete themselves
+                    if (parameters.get(0).equals(sessions.get(parameters.get(1)).get(0))) {
+                        oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Users Cannot Delete Themselves"));
                     } else {
-                        oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
+                        // delete user
+                        if (Users.deleteUserFromDB(parameters.get(0))) {
+                            oos.writeObject(new Response(StatusCodes.OK, "User Deletion Successful"));
+                        } else {
+                            oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Deletion Unsuccessful"));
+                        }
                     }
+                } else {
+                    oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
                 }
             } else {
                 oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));

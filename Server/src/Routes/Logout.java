@@ -27,17 +27,11 @@ public class Logout {
         if (parameters.size() != 1) {
             oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Parameters Invalid"));
         } else {
-            // check if token from parameters is valid
-            if (sessions.containsKey(parameters.get(0))) {
-                // check if the session token has expired
-                if (hasTokenExpired(sessions, parameters.get(0))) {
-                    oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
-                } else {
-                    oos.writeObject(new Response(StatusCodes.OK, "Logout Successful"));
-                }
-
+            // check if token from parameters is valid and if session token has not yet expired
+            if (sessions.containsKey(parameters.get(0)) && !hasTokenExpired(sessions, parameters.get(0))) {
                 // delete this token from sessions
                 sessions.remove(parameters.get(0));
+                oos.writeObject(new Response(StatusCodes.OK, "Logout Successful"));
             } else {
                 oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));
             }
