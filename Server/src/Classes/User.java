@@ -15,7 +15,7 @@ public class User implements Serializable {
      */
     private String userName;
     private String password;
-    private ArrayList<String> permissions;
+    private ArrayList<Integer> permissions;
 
     /**
      * Constructor to create a new instance of a user.
@@ -24,7 +24,7 @@ public class User implements Serializable {
      * @param password a string of the user's password.
      * @param permissions a string ArrayList of the user's permissions.
      */
-    public User(String userName, String password, ArrayList<String> permissions) {
+    public User(String userName, String password, ArrayList<Integer> permissions) {
         this.userName = userName;
         this.password = password;
         this.permissions = permissions;
@@ -49,5 +49,5 @@ public class User implements Serializable {
      *
      * @return a string ArrayList of the user's permissions.
      */
-    public ArrayList<String> getPermissions() { return this.permissions; }
+    public ArrayList<Integer> getPermissions() { return this.permissions; }
 }

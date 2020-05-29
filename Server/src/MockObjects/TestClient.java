@@ -37,19 +37,19 @@ public class TestClient {
         // create new user request tests
         ArrayList<String> workingCreateUser = new ArrayList<>();
         workingCreateUser.add("testUser1");
-        workingCreateUser.add("{1}");
+        workingCreateUser.add("[1]");
         workingCreateUser.add("password");
         workingCreateUser.add(token);
 
         ArrayList<String> wrongCreateUser = new ArrayList<>();
         wrongCreateUser.add("testUser1");
-        wrongCreateUser.add("{1}");
+        wrongCreateUser.add("[1]");
         wrongCreateUser.add("password");
         wrongCreateUser.add("Fake Token");
 
         ArrayList<String> brokenCreateUser = new ArrayList<>();
         brokenCreateUser.add("testUser1");
-        brokenCreateUser.add("{1}");
+        brokenCreateUser.add("[1]");
         brokenCreateUser.add("password");
 
         sendRequest(RequestTypes.CREATE_USER, workingCreateUser);
@@ -71,6 +71,25 @@ public class TestClient {
         sendRequest(RequestTypes.GET_PERMISSIONS, workingGetPermissions);
         sendRequest(RequestTypes.GET_PERMISSIONS, wrongGetPermissions);
         sendRequest(RequestTypes.GET_PERMISSIONS, brokenGetPermissions);
+
+        // set user permissions request tests
+        ArrayList<String> workingSetPermissions = new ArrayList<>();
+        workingSetPermissions.add("testUser1");
+        workingSetPermissions.add("[1, 2, 3]");
+        workingSetPermissions.add(token);
+
+        ArrayList<String> wrongSetPermissions = new ArrayList<>();
+        wrongSetPermissions.add("admin");
+        wrongSetPermissions.add("[1, 2, 3]");
+        wrongSetPermissions.add(token);
+
+        ArrayList<String> brokenSetPermissions = new ArrayList<>();
+        brokenSetPermissions.add("admin");
+        brokenSetPermissions.add("[1, 2, 3]");
+
+        sendRequest(RequestTypes.SET_PERMISSIONS, workingSetPermissions);
+        sendRequest(RequestTypes.SET_PERMISSIONS, wrongSetPermissions);
+        sendRequest(RequestTypes.SET_PERMISSIONS, brokenSetPermissions);
 
         // set user password request tests
         ArrayList<String> workingSetOwnPassword = new ArrayList<>();

@@ -74,7 +74,7 @@ public class Users {
             statement.clearParameters();
             statement.setString(1, userName);
             statement.setString(2, password);
-            statement.execute();
+            statement.executeUpdate();
 
             // try to insert the new user's permissions into the userPermissions table
             statement = connection.prepareStatement(
@@ -82,10 +82,11 @@ public class Users {
             );
             // insert all of the permissions from permissionsList
             for (String permission : permissionsList) {
+                if (permission.equals("")) { continue; } // if empty permissions list is passed
                 statement.clearParameters();
                 statement.setString(1, userName);
                 statement.setInt(2, Integer.parseInt(permission));
-                statement.execute();
+                statement.executeUpdate();
             }
 
             // close statement and connection object
@@ -252,5 +253,47 @@ public class Users {
         }
         // return userCredentials
         return userPermissions;
+    }
+
+    /**
+     * Set new permissions for a particular user in the users table.
+     *
+     * @param userName of the user whose permissions will be changed.
+     * @param permissions string of the new permissions to be set.
+     */
+    public static void setPermissionsInDB(String userName, String permissions) {
+        // convert permissions string into a list
+        List<String> permissionsList = Arrays.asList(permissions.substring(1, permissions.length() - 1).split(", "));
+
+        // try to delete the user's current permissions and set the new ones
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM userPermissions WHERE userName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, userName);
+            statement.executeUpdate();
+
+            // insert the new list of permissions for the user into the userPermissions table
+            statement = connection.prepareStatement(
+                    "INSERT INTO userPermissions VALUES (?, ?)"
+            );
+            // insert all of the permissions from permissionsList
+            for (String permission : permissionsList) {
+                if (permission.equals("")) { continue; } // if empty permissions list is passed
+                statement.clearParameters();
+                statement.setString(1, userName);
+                statement.setInt(2, Integer.parseInt(permission));
+                statement.executeUpdate();
+            }
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
     }
 }

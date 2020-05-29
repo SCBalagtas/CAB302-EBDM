@@ -4,7 +4,6 @@ import Classes.Response;
 import Constants.ServerPermissions;
 import Constants.StatusCodes;
 import Database.Users;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class GetUserPermissions {
      * @param oos an ObjectOutputStream object to write a response to the client.
      */
     public static void getUserPermissions(ArrayList<String> parameters, HashMap<String, ArrayList<String>> sessions, ObjectOutputStream oos) throws IOException {
-        ArrayList<Integer> userPermissions = new ArrayList<>();
+        ArrayList<Integer> userPermissions;
 
         // check if correct number of parameters have been provided
         if (parameters.size() != 2) {
