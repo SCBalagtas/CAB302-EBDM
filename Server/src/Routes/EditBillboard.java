@@ -36,14 +36,14 @@ public class EditBillboard {
             if (sessions.containsKey(parameters.get(2)) && !hasTokenExpired(sessions, parameters.get(2))) {
                 // check if the billboard exists
                 if (Billboards.doesBillboardExists(parameters.get(0))) {
-                    // check if the user is trying to edit their own billboard
-                    if (Billboards.getCreator(parameters.get(0)).equals(sessions.get(parameters.get(2)).get(0))) {
-                        // check if the user has the "Edit All Billboards" permission
-                        if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.EDIT_ALL_BILLBOARDS)) {
-                            // edit the billboard
-                            Billboards.updateBillboardContent(parameters.get(0), parameters.get(1));
-                            oos.writeObject(new Response(StatusCodes.OK, "Billboard Updated"));
-                        } else {
+                    // check if the user has the "Edit All Billboards" permission
+                    if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.EDIT_ALL_BILLBOARDS)) {
+                        // edit the billboard
+                        Billboards.updateBillboardContent(parameters.get(0), parameters.get(1));
+                        oos.writeObject(new Response(StatusCodes.OK, "Billboard Updated"));
+                    } else {
+                        // check if the user is trying to edit their own billboard
+                        if (Billboards.getCreator(parameters.get(0)).equals(sessions.get(parameters.get(2)).get(0))) {
                             // check if the user has the "Create Billboards" permission and if the billboard is not scheduled
                             if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.CREATE_BILLBOARDS) && !Schedules.isBillboardScheduled(parameters.get(0))) {
                                 // edit the billboard
@@ -52,13 +52,6 @@ public class EditBillboard {
                             } else {
                                 oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
                             }
-                        }
-                    } else {
-                        // check if the user has the "Edit All Billboards" permission
-                        if (Users.userHasPermission(sessions.get(parameters.get(2)).get(0), ServerPermissions.EDIT_ALL_BILLBOARDS)) {
-                            // edit the billboard
-                            Billboards.updateBillboardContent(parameters.get(0), parameters.get(1));
-                            oos.writeObject(new Response(StatusCodes.OK, "Billboard Updated"));
                         } else {
                             oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
                         }
