@@ -52,4 +52,29 @@ public class Schedules {
             return false;
         }
     }
+
+    /**
+     * Delete schedules from the schedules table by billboardName.
+     *
+     * @param billboardName of billboard whose schedules will be deleted.
+     */
+    public static void deleteSchedulesFromDBByBillboardName(String billboardName) {
+        // try to delete the schedules from the schedules table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM schedules WHERE billboardName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, billboardName);
+            statement.executeUpdate();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
 }

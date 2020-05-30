@@ -141,4 +141,29 @@ public class Billboards {
             System.err.println(e);
         }
     }
+
+    /**
+     * Delete billboard from the billboards table.
+     *
+     * @param billboardName of billboard to be deleted.
+     */
+    public static void deleteBillboardFromDB(String billboardName) {
+        // try to delete the billboard from the billboards table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM billboards WHERE billboardName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, billboardName);
+            statement.executeUpdate();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
 }
