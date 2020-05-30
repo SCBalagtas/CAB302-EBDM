@@ -1,9 +1,6 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * Author: Steven Balagtas
@@ -72,6 +69,69 @@ public class Billboards {
             statement.setString(1, billboardName);
             statement.setString(2, content);
             statement.setString(3, creator);
+            statement.executeUpdate();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    /**
+     * Get the creator of a particular billboard.
+     *
+     * @param billboardName of the billboard whose creator will be retrieved.
+     * @return a string of the userName of the creator of the billboard.
+     */
+    public static String getCreator(String billboardName) {
+        String creator = null;
+
+        // try to get the creator of billboard
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT creator FROM billboards WHERE billboardName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, billboardName);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+
+            // save result into creator
+            creator = resultSet.getString("creator");
+
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return creator;
+    }
+
+    /**
+     * Update a billboard's content in the billboards table.
+     *
+     * @param billboardName of the billboard to be updated.
+     * @param content that will be replace the old content.
+     */
+    public static void updateBillboardContent(String billboardName, String content) {
+        // try to insert the new content for the billboard
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE billboards SET content=? WHERE billboardName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, content);
+            statement.setString(2, billboardName);
             statement.executeUpdate();
 
             // close statement and connection object

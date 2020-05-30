@@ -166,6 +166,31 @@ public class TestClient {
         sendRequest(RequestTypes.CREATE_BILLBOARD, wrongCreateBillboard);
         sendRequest(RequestTypes.CREATE_BILLBOARD, brokenCreateBillboard);
 
+        // edit billboard request tests
+        ArrayList<String> workingEditBillboard = new ArrayList<>();
+        workingEditBillboard.add("testBillboard1");
+        workingEditBillboard.add("moreXMLcode");
+        workingEditBillboard.add(token);
+
+        ArrayList<String> nonexistentEditBillboard = new ArrayList<>();
+        nonexistentEditBillboard.add("admin");
+        nonexistentEditBillboard.add("moreXMLcode");
+        nonexistentEditBillboard.add(token);
+
+        ArrayList<String> wrongEditBillboard = new ArrayList<>();
+        wrongEditBillboard.add("testBillboard1");
+        wrongEditBillboard.add("moreXMLcode");
+        wrongEditBillboard.add("Fake Token");
+
+        ArrayList<String> brokenEditBillboard = new ArrayList<>();
+        brokenEditBillboard.add("testBillboard1");
+        brokenEditBillboard.add("moreXMLcode");
+
+        sendRequest(RequestTypes.EDIT_BILLBOARD, workingEditBillboard);
+        sendRequest(RequestTypes.EDIT_BILLBOARD, nonexistentEditBillboard);
+        sendRequest(RequestTypes.EDIT_BILLBOARD, wrongEditBillboard);
+        sendRequest(RequestTypes.EDIT_BILLBOARD, brokenEditBillboard);
+
         // logout request tests
         ArrayList<String> workingLogout = new ArrayList<>();
         workingLogout.add(token);
