@@ -147,6 +147,25 @@ public class TestClient {
         sendRequest(RequestTypes.DELETE_USER, wrongDeleteUser);
         sendRequest(RequestTypes.DELETE_USER, brokenDeleteUser);
 
+        // create billboard request tests
+        ArrayList<String> workingCreateBillboard = new ArrayList<>();
+        workingCreateBillboard.add("testBillboard1");
+        workingCreateBillboard.add("XMLcode");
+        workingCreateBillboard.add(token);
+
+        ArrayList<String> wrongCreateBillboard = new ArrayList<>();
+        wrongCreateBillboard.add("testBillboard1");
+        wrongCreateBillboard.add("XMLcode");
+        wrongCreateBillboard.add("Fake Token");
+
+        ArrayList<String> brokenCreateBillboard = new ArrayList<>();
+        brokenCreateBillboard.add("testBillboard1");
+        brokenCreateBillboard.add("XMLcode");
+
+        sendRequest(RequestTypes.CREATE_BILLBOARD, workingCreateBillboard);
+        sendRequest(RequestTypes.CREATE_BILLBOARD, wrongCreateBillboard);
+        sendRequest(RequestTypes.CREATE_BILLBOARD, brokenCreateBillboard);
+
         // logout request tests
         ArrayList<String> workingLogout = new ArrayList<>();
         workingLogout.add(token);

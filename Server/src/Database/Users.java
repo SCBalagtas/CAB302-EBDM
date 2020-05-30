@@ -61,7 +61,7 @@ public class Users {
         // convert permissions string into a list
         List<String> permissionsList = Arrays.asList(permissions.substring(1, permissions.length() - 1).split(", "));
 
-        // try to insert the new user into the user table
+        // try to insert the new user into the users table
         try {
             // create new connection and statement object
             Connection connection = DBConnection.getConnection();

@@ -74,6 +74,8 @@ public class Main {
                     SetUserPermissions.setUserPermissions(request.getRequestParameters(), sessions, oos);
                 } else if (request.getRequestType().equals(RequestTypes.LIST_USERS)) {
                     ListUsers.listUsers(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.CREATE_BILLBOARD)) {
+                    CreateBillboard.createBillboard(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();

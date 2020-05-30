@@ -38,7 +38,7 @@ public class CreateUser {
                     if (Users.insertNewUser(parameters.get(0), parameters.get(1), parameters.get(2))) {
                         oos.writeObject(new Response(StatusCodes.CREATED, "User Creation Successful"));
                     } else {
-                        oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Creation Unsuccessful"));
+                        oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Already Exists"));
                     }
                 } else {
                     oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
