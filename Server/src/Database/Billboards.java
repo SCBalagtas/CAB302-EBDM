@@ -166,4 +166,39 @@ public class Billboards {
             System.err.println(e);
         }
     }
+
+    /**
+     * Get a billboard's content.
+     *
+     * @param billboardName of the billboard whose content will be retrieved.
+     */
+    public static String getBillboardContent(String billboardName) {
+        String content = null;
+
+        // try to get the content of billboard
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT content FROM billboards WHERE billboardName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, billboardName);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+
+            // save result into content
+            content = resultSet.getString("content");
+
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return content;
+    }
 }

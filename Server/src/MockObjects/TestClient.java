@@ -191,6 +191,27 @@ public class TestClient {
         sendRequest(RequestTypes.EDIT_BILLBOARD, wrongEditBillboard);
         sendRequest(RequestTypes.EDIT_BILLBOARD, brokenEditBillboard);
 
+        // get billboard request tests
+        ArrayList<String> workingGetBillboard = new ArrayList<>();
+        workingGetBillboard.add("testBillboard1");
+        workingGetBillboard.add(token);
+
+        ArrayList<String> nonexistentGetBillboard = new ArrayList<>();
+        nonexistentGetBillboard.add("admin");
+        nonexistentGetBillboard.add(token);
+
+        ArrayList<String> wrongGetBillboard = new ArrayList<>();
+        wrongGetBillboard.add("testBillboard1");
+        wrongGetBillboard.add("Fake Token");
+
+        ArrayList<String> brokenGetBillboard = new ArrayList<>();
+        brokenGetBillboard.add("testBillboard1");
+
+        sendRequest(RequestTypes.GET_BILLBOARD, workingGetBillboard);
+        sendRequest(RequestTypes.GET_BILLBOARD, nonexistentGetBillboard);
+        sendRequest(RequestTypes.GET_BILLBOARD, wrongGetBillboard);
+        sendRequest(RequestTypes.GET_BILLBOARD, brokenGetBillboard);
+
         // delete billboard request tests
         ArrayList<String> workingDeleteBillboard = new ArrayList<>();
         workingDeleteBillboard.add("testBillboard1");

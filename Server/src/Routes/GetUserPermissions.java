@@ -21,7 +21,7 @@ public class GetUserPermissions {
     /**
      * This is the method to handle the get user permissions request.
      *
-     * @param parameters a string ArrayList of the userName of the user who's permissions will be retrieved and a valid session token.
+     * @param parameters a string ArrayList containing the userName of the user whose permissions will be retrieved and a valid session token.
      * @param sessions a HashMap of the active session tokens for the server.
      * @param oos an ObjectOutputStream object to write a response to the client.
      */
