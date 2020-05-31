@@ -1,6 +1,8 @@
 package Database;
 
+import Classes.Billboard;
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Author: Steven Balagtas
@@ -200,5 +202,43 @@ public class Billboards {
             System.err.println(e);
         }
         return content;
+    }
+
+    /**
+     * Get all the billboards from the billboards table.
+     *
+     * @return a billboard ArrayList of all the billboards in the billboards table.
+     */
+    public static ArrayList<Billboard> getBillboards() {
+        // billboard ArrayList to store all the billboards from the billboards table
+        ArrayList<Billboard> billboards = new ArrayList<>();
+
+        // try to get all the billboards from the billboards table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM billboards");
+
+            // add the billboard into billboards if result set is not empty
+            while (resultSet.next()) {
+                billboards.add(new Billboard(
+                        resultSet.getString("billboardName"),
+                        resultSet.getString("content"),
+                        resultSet.getString("creator")
+                ));
+            }
+
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        // return billboards
+        return billboards;
     }
 }

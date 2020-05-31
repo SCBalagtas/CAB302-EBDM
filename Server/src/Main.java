@@ -82,6 +82,8 @@ public class Main {
                     DeleteBillboard.deleteBillboard(request.getRequestParameters(), sessions, oos);
                 } else if (request.getRequestType().equals(RequestTypes.GET_BILLBOARD)) {
                     GetBillboard.getBillboard(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.LIST_BILLBOARDS)) {
+                    ListBillboards.listBillboards(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();
