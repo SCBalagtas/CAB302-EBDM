@@ -34,7 +34,7 @@ public class TestClient {
         sendRequest(RequestTypes.LOGIN, wrongLogin);
         sendRequest(RequestTypes.LOGIN, brokenLogin);
 
-        // create new user request tests
+        // create user request tests
         ArrayList<String> workingCreateUser = new ArrayList<>();
         workingCreateUser.add("testUser1");
         workingCreateUser.add("[1]");
@@ -247,6 +247,35 @@ public class TestClient {
         sendRequest(RequestTypes.DELETE_BILLBOARD, nonexistentDeleteBillboard);
         sendRequest(RequestTypes.DELETE_BILLBOARD, wrongDeleteBillboard);
         sendRequest(RequestTypes.DELETE_BILLBOARD, brokenDeleteBillboard);
+
+        // create schedule request tests
+        ArrayList<String> workingCreateSchedule = new ArrayList<>();
+        workingCreateSchedule.add("anotherTestBillboard");
+        workingCreateSchedule.add("2020-05-31T23:30:00");
+        workingCreateSchedule.add("30");
+        workingCreateSchedule.add(token);
+
+        ArrayList<String> nonexistentBillboardCreateSchedule = new ArrayList<>();
+        nonexistentBillboardCreateSchedule.add("TestBillboard1");
+        nonexistentBillboardCreateSchedule.add("2020-05-31T23:30:00");
+        nonexistentBillboardCreateSchedule.add("30");
+        nonexistentBillboardCreateSchedule.add(token);
+
+        ArrayList<String> wrongCreateSchedule = new ArrayList<>();
+        wrongCreateSchedule.add("anotherTestBillboard");
+        wrongCreateSchedule.add("2020-05-31T23:30:00");
+        wrongCreateSchedule.add("30");
+        wrongCreateSchedule.add("Fake Token");
+
+        ArrayList<String> brokenCreateSchedule = new ArrayList<>();
+        brokenCreateSchedule.add("anotherTestBillboard");
+        brokenCreateSchedule.add("2020-05-31T23:30:00");
+        brokenCreateSchedule.add("30");
+
+        sendRequest(RequestTypes.CREATE_SCHEDULE, workingCreateSchedule);
+        sendRequest(RequestTypes.CREATE_SCHEDULE, nonexistentBillboardCreateSchedule);
+        sendRequest(RequestTypes.CREATE_SCHEDULE, wrongCreateSchedule);
+        sendRequest(RequestTypes.CREATE_SCHEDULE, brokenCreateSchedule);
 
         // logout request tests
         ArrayList<String> workingLogout = new ArrayList<>();
