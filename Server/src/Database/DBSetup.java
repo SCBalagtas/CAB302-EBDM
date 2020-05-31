@@ -45,8 +45,8 @@ public class DBSetup {
                 + "(billboardName   VARCHAR(255) PRIMARY KEY, "
                 + "content          TEXT NOT NULL, "
                 + "creator          VARCHAR(50), "
-                + "creationDate DATETIME DEFAULT NOW(), "
-                + "updatedAt    DATETIME DEFAULT NOW() ON UPDATE NOW(), "
+                + "creationDate     DATETIME DEFAULT NOW(), "
+                + "updatedAt        DATETIME DEFAULT NOW() ON UPDATE NOW(), "
                 + "FOREIGN KEY (creator) REFERENCES users(userName) ON DELETE SET NULL)";
 
         // execute create table statement
@@ -72,6 +72,7 @@ public class DBSetup {
                 + "duration         INT NOT NULL, "
                 + "freqType         ENUM ('Daily', 'Hourly', 'Minutes') DEFAULT NULL, "
                 + "freqInterval     INT DEFAULT NULL, "
+                + "creationDate     DATETIME DEFAULT NOW(), "
                 + "FOREIGN KEY (billboardName) REFERENCES billboards(billboardName), "
                 + "FOREIGN KEY (scheduledBy) REFERENCES users(userName) ON DELETE SET NULL)";
 
