@@ -109,4 +109,55 @@ public class Schedules {
             System.err.println(e);
         }
     }
+
+    /**
+     * Insert a new schedule into the schedules table with frequency options.
+     *
+     * @param billboardName of the billboard to be scheduled.
+     * @param scheduledBy userName of the user who created the schedule.
+     * @param schedule DateTime of the schedule.
+     * @param duration of the schedule in minutes.
+     * @param freqType string of the frequency type, ('Daily', 'Hourly', 'Minutes').
+     * @param freqInterval interval of the frequency in minutes, only exist if 'Minutes' freqType is selected.
+     */
+    public static void insertScheduleWithFrequencyOptions(String billboardName, String scheduledBy, LocalDateTime schedule, int duration, String freqType, String freqInterval) {
+        // try and insert the schedule into the schedules table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement;
+
+            // if freqType is 'Minutes', also insert the freqInterval
+            if (freqType.equals("Minutes")) {
+                statement = connection.prepareStatement(
+                        "INSERT INTO schedules (billboardName, scheduledBy, schedule, duration, freqType, freqInterval) VALUES (?, ?, ?, ?, ?, ?)"
+                );
+                statement.clearParameters();
+                statement.setString(1, billboardName);
+                statement.setString(2, scheduledBy);
+                statement.setObject(3, schedule);
+                statement.setInt(4, duration);
+                statement.setString(5, freqType);
+                statement.setInt(6, Integer.parseInt(freqInterval));
+            } else {
+                statement = connection.prepareStatement(
+                        "INSERT INTO schedules (billboardName, scheduledBy, schedule, duration, freqType) VALUES (?, ?, ?, ?, ?)"
+                );
+                statement.clearParameters();
+                statement.setString(1, billboardName);
+                statement.setString(2, scheduledBy);
+                statement.setObject(3, schedule);
+                statement.setInt(4, duration);
+                statement.setString(5, freqType);
+            }
+
+            statement.executeUpdate();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
 }

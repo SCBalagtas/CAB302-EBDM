@@ -234,6 +234,14 @@ public class TestClient {
         workingCreateSchedule.add("30");
         workingCreateSchedule.add(token);
 
+        ArrayList<String> workingCreateScheduleWithFreq = new ArrayList<>();
+        workingCreateScheduleWithFreq.add("TestBillboard1");
+        workingCreateScheduleWithFreq.add("2020-05-31T23:30:00");
+        workingCreateScheduleWithFreq.add("30");
+        workingCreateScheduleWithFreq.add(token);
+        workingCreateScheduleWithFreq.add("Minutes");
+        workingCreateScheduleWithFreq.add("30");
+
         ArrayList<String> nonexistentBillboardCreateSchedule = new ArrayList<>();
         nonexistentBillboardCreateSchedule.add("anotherTestBillboard");
         nonexistentBillboardCreateSchedule.add("2020-05-31T23:30:00");
@@ -252,6 +260,7 @@ public class TestClient {
         brokenCreateSchedule.add("30");
 
         sendRequest(RequestTypes.CREATE_SCHEDULE, workingCreateSchedule);
+        sendRequest(RequestTypes.CREATE_SCHEDULE, workingCreateScheduleWithFreq);
         sendRequest(RequestTypes.CREATE_SCHEDULE, nonexistentBillboardCreateSchedule);
         sendRequest(RequestTypes.CREATE_SCHEDULE, wrongCreateSchedule);
         sendRequest(RequestTypes.CREATE_SCHEDULE, brokenCreateSchedule);

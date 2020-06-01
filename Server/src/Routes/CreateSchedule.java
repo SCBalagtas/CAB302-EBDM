@@ -40,13 +40,12 @@ public class CreateSchedule {
                         // check if the schedule has frequency options
                         if (parameters.size() == 6) {
                             // add schedule with frequency options
-                            // ...
-                            oos.writeObject(new Response(StatusCodes.OK, "Still Working On It :)"));
+                            Schedules.insertScheduleWithFrequencyOptions(parameters.get(0), sessions.get(parameters.get(3)).get(0), LocalDateTime.parse(parameters.get(1)), Integer.parseInt(parameters.get(2)), parameters.get(4), parameters.get(5));
                         } else {
                             // add schedule without frequency options
                             Schedules.insertSchedule(parameters.get(0), sessions.get(parameters.get(3)).get(0), LocalDateTime.parse(parameters.get(1)), Integer.parseInt(parameters.get(2)));
-                            oos.writeObject(new Response(StatusCodes.OK, "Schedule Creation Successful"));
                         }
+                        oos.writeObject(new Response(StatusCodes.OK, "Schedule Creation Successful"));
                     } else {
                         oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "Billboard Does Not Exist"));
                     }
