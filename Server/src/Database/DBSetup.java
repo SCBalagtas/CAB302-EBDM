@@ -1,9 +1,9 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import Classes.Utility;
+
+import java.security.NoSuchAlgorithmException;
+import java.sql.*;
 
 /**
  * Author: Steven Balagtas
@@ -22,7 +22,8 @@ public class DBSetup {
         // sql statement to create the users table
         String createUsers = "CREATE TABLE IF NOT EXISTS users "
                 + "(userName    VARCHAR(50) PRIMARY KEY, "
-                + "password     VARCHAR(50) NOT NULL, "
+                + "password     VARCHAR(255) NOT NULL, "
+                + "salt         VARCHAR(255), "
                 + "creationDate DATETIME DEFAULT NOW(), "
                 + "updatedAt    DATETIME DEFAULT NOW() ON UPDATE NOW())";
 
@@ -171,11 +172,49 @@ public class DBSetup {
     }
 
     /**
+     * Salt hash the admin account's password.
+     */
+    private static void saltHashAdminPassword(Connection connection) throws SQLException, NoSuchAlgorithmException {
+        // generate a password salt for admin
+        String passwordSalt = Utility.generatePasswordSalt();
+
+        // get the admin password from the users table
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT password FROM users WHERE userName='admin'");
+        resultSet.next();
+        String password = resultSet.getString("password");
+        statement.close();
+
+        // hash the admin password
+        String hashedPassword = Utility.hashString(password);
+
+        // salt hash the admin password
+        String saltedHashedPassword = Utility.hashString(hashedPassword + passwordSalt);
+
+        // set the admin password to the saltedHashedPassword
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE users SET password=? WHERE userName='admin'"
+        );
+        preparedStatement.clearParameters();
+        preparedStatement.setString(1, saltedHashedPassword);
+        preparedStatement.executeUpdate();
+
+        // store the password salt for admin
+        preparedStatement = connection.prepareStatement(
+                "UPDATE users SET salt=? WHERE userName='admin'"
+        );
+        preparedStatement.clearParameters();
+        preparedStatement.setString(1, passwordSalt);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+    }
+
+    /**
      * Creates all the tables required for the EBDM database if they do not already exist.
      *
      * @throws SQLException if database connection fails.
      */
-    public static void setupTables() throws SQLException {
+    public static void setupTables() throws SQLException, NoSuchAlgorithmException {
         System.out.println("Checking database status");
 
         // create new connection and statement object
@@ -209,6 +248,7 @@ public class DBSetup {
         if (!resultSet.next()) {
             System.out.println("Users table is empty! Creating admin user now...");
             createAdmin(statement);
+            saltHashAdminPassword(connection);
         } else {
             System.out.println("OK! Users table already populated");
         }

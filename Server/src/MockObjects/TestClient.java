@@ -2,10 +2,12 @@ package MockObjects;
 
 import Classes.Request;
 import Classes.Response;
+import Classes.Utility;
 import Configs.ServerConfig;
 import Constants.RequestTypes;
 import java.io.*;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
@@ -15,11 +17,11 @@ import java.util.ArrayList;
  */
 
 public class TestClient {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
         // login request tests
         ArrayList<String> workingLogin = new ArrayList<>();
         workingLogin.add("admin");
-        workingLogin.add("admin");
+        workingLogin.add(Utility.hashString("admin"));
 
         ArrayList<String> wrongLogin = new ArrayList<>();
         wrongLogin.add("admin");
@@ -38,7 +40,7 @@ public class TestClient {
         ArrayList<String> workingCreateUser = new ArrayList<>();
         workingCreateUser.add("testUser1");
         workingCreateUser.add("[1]");
-        workingCreateUser.add("password");
+        workingCreateUser.add(Utility.hashString("password"));
         workingCreateUser.add(token);
 
         ArrayList<String> wrongCreateUser = new ArrayList<>();
@@ -120,12 +122,12 @@ public class TestClient {
         // set user password request tests
         ArrayList<String> workingSetOwnPassword = new ArrayList<>();
         workingSetOwnPassword.add("admin");
-        workingSetOwnPassword.add("admin");
+        workingSetOwnPassword.add(Utility.hashString("admin"));
         workingSetOwnPassword.add(token);
 
         ArrayList<String> workingSetUserPassword = new ArrayList<>();
         workingSetUserPassword.add("testUser1");
-        workingSetUserPassword.add("password123");
+        workingSetUserPassword.add(Utility.hashString("password123"));
         workingSetUserPassword.add(token);
 
         ArrayList<String> nonexistentSetUserPassword = new ArrayList<>();

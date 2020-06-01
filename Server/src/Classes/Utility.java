@@ -1,5 +1,7 @@
 package Classes;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +38,26 @@ public class Utility {
         byte[] tokenBytes = new byte[32];
         rng.nextBytes(tokenBytes);
         return bytesToString(tokenBytes);
+    }
+
+    /**
+     * Author: CAB302 Teaching Team
+     *
+     * Generate a password salt.
+     */
+    public static String generatePasswordSalt() {
+        return generateSessionToken();
+    }
+
+    /**
+     * Author: CAB302 Teaching Team
+     *
+     * Generate a password salt.
+     */
+    public static String hashString(String string) throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        byte[] hashedString = messageDigest.digest(string.getBytes());
+        return bytesToString(hashedString);
     }
 
     /**

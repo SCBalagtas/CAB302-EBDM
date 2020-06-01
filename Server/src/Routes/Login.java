@@ -1,10 +1,12 @@
 package Routes;
 
 import Classes.Response;
+import Classes.Utility;
 import Constants.StatusCodes;
 import Database.Users;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,14 +36,19 @@ public class Login {
         try {
             userCredentials = Users.getUserCredentials(userName);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(e);
             return false;
         }
 
         // check if userName is in the database
         if (!userCredentials.isEmpty()) {
             // Check if password matches the password in userCredentials
-            if (password.equals(userCredentials.get(1))) { return true; }
+            try {
+                if (Utility.hashString(password + userCredentials.get(2)).equals(userCredentials.get(1))) { return true; }
+            } catch (NoSuchAlgorithmException e) {
+                System.err.println(e);
+                return false;
+            }
         }
         return false;
     }

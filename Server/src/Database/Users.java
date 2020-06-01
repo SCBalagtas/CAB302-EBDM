@@ -1,5 +1,7 @@
 package Database;
 
+import Classes.Utility;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +59,7 @@ public class Users {
      * Gets the users credentials from the database.
      *
      * @param userName of the user.
-     * @return a string ArrayList containing the user's userName and password.
+     * @return a string ArrayList containing the user's userName, password and salt.
      * If userName does not exist in the database, empty ArrayList will be returned.
      * */
     public static ArrayList<String> getUserCredentials(String userName) throws SQLException {
@@ -67,7 +69,7 @@ public class Users {
         // create new connection and statement object
         Connection connection = DBConnection.getConnection();
         PreparedStatement statement = connection.prepareStatement(
-                "SELECT userName, password FROM users WHERE userName=?"
+                "SELECT userName, password, salt FROM users WHERE userName=?"
         );
         statement.clearParameters();
         statement.setString(1, userName);
@@ -77,6 +79,7 @@ public class Users {
         if (resultSet.next()) {
             userCredentials.add(resultSet.getString("userName"));
             userCredentials.add(resultSet.getString("password"));
+            userCredentials.add(resultSet.getString("salt"));
         }
 
         // close result set
@@ -102,16 +105,23 @@ public class Users {
         // convert permissions string into a list
         List<String> permissionsList = Arrays.asList(permissions.substring(1, permissions.length() - 1).split(", "));
 
+        // generate a password salt
+        String passwordSalt = Utility.generatePasswordSalt();
+
         // try to insert the new user into the users table
         try {
+            // salt hash the password
+            String saltedHashedPassword = Utility.hashString(password + passwordSalt);
+
             // create new connection and statement object
             Connection connection = DBConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO users (userName, password) VALUES (?, ?)"
+                    "INSERT INTO users (userName, password, salt) VALUES (?, ?, ?)"
             );
             statement.clearParameters();
             statement.setString(1, userName);
-            statement.setString(2, password);
+            statement.setString(2, saltedHashedPassword);
+            statement.setString(3, passwordSalt);
             statement.executeUpdate();
 
             // try to insert the new user's permissions into the userPermissions table
@@ -133,6 +143,9 @@ public class Users {
 
             return true;
         } catch (SQLException e) {
+            return false;
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println(e);
             return false;
         }
     }
@@ -227,11 +240,24 @@ public class Users {
         try {
             // create new connection and statement object
             Connection connection = DBConnection.getConnection();
+
+            // get the user's salt
             PreparedStatement statement = connection.prepareStatement(
+                    "SELECT salt FROM users WHERE userName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, userName);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            String passwordSalt = resultSet.getString("salt");
+            resultSet.close();
+
+            // update the user's password
+            statement = connection.prepareStatement(
                     "UPDATE users SET password=? WHERE userName=?"
             );
             statement.clearParameters();
-            statement.setString(1, password);
+            statement.setString(1, Utility.hashString(password + passwordSalt)); // salt hash the password
             statement.setString(2, userName);
 
             // if affected rows != 0 return true
@@ -249,6 +275,9 @@ public class Users {
 
             return false;
         } catch (SQLException e) {
+            return false;
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println(e);
             return false;
         }
     }
