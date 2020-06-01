@@ -220,7 +220,7 @@ public class TestClient {
         wrongListBillboards.add("Fake Token");
 
         ArrayList<String> brokenListBillboards = new ArrayList<>();
-        brokenListBillboards.add(token);
+        brokenListBillboards.add("Fake Token");
         brokenListBillboards.add("admin");
 
         sendRequest(RequestTypes.LIST_BILLBOARDS, workingListBillboards);
@@ -264,6 +264,21 @@ public class TestClient {
         sendRequest(RequestTypes.CREATE_SCHEDULE, nonexistentBillboardCreateSchedule);
         sendRequest(RequestTypes.CREATE_SCHEDULE, wrongCreateSchedule);
         sendRequest(RequestTypes.CREATE_SCHEDULE, brokenCreateSchedule);
+
+        // view schedule request tests
+        ArrayList<String> workingViewSchedule = new ArrayList<>();
+        workingViewSchedule.add(token);
+
+        ArrayList<String> wrongViewSchedule = new ArrayList<>();
+        wrongViewSchedule.add("Fake Token");
+
+        ArrayList<String> brokenViewSchedule = new ArrayList<>();
+        brokenViewSchedule.add("Fake Token");
+        brokenViewSchedule.add("admin");
+
+        sendRequest(RequestTypes.VIEW_SCHEDULE, workingViewSchedule);
+        sendRequest(RequestTypes.VIEW_SCHEDULE, wrongViewSchedule);
+        sendRequest(RequestTypes.VIEW_SCHEDULE, brokenViewSchedule);
 
         // delete schedule request tests
         ArrayList<String> workingDeleteSchedule = new ArrayList<>();

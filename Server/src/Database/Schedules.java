@@ -1,10 +1,9 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import Classes.Schedule;
+import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * Author: Steven Balagtas
@@ -186,5 +185,46 @@ public class Schedules {
         } catch (SQLException e) {
             System.err.println(e);
         }
+    }
+
+    /**
+     * Get all the schedules from the schedules table.
+     *
+     * @return a schedule ArrayList of all the schedules in the schedules table.
+     */
+    public static ArrayList<Schedule> getSchedules() {
+        // schedule ArrayList to store all the schedules from the schedules table
+        ArrayList<Schedule> schedules = new ArrayList<>();
+
+        // try to get all the schedules from the schedules table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM schedules");
+
+            // add the schedule into schedules if result set is not empty
+            while (resultSet.next()) {
+                schedules.add(new Schedule(
+                        resultSet.getString("billboardName"),
+                        resultSet.getString("scheduledBy"),
+                        resultSet.getObject("schedule").toString(),
+                        resultSet.getInt("duration"),
+                        resultSet.getString("freqType"),
+                        resultSet.getInt("freqInterval")
+                ));
+            }
+
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        // return schedules
+        return schedules;
     }
 }
