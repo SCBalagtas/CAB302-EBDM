@@ -1,95 +1,96 @@
+import Classes.Request;
+import Classes.Response;
+import Constants.RequestTypes;
+import Constants.Session;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.ArrayList;
+
+/**
+ * @author Felix Savins
+ *
+ * main class creates frame with input fields for username and password and submit button
+ */
 
 public class LoginScreen {
+
+    /**
+     *
+     * @throws ClassNotFoundException
+     * @throws UnsupportedLookAndFeelException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+
     public void main() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        JFrame frame = new JFrame ("Testing Frame");
-        frame.setSize(400,400); // sized for ease of testing. Needs to be fullscreen for final application
+
+        JFrame loginFrame = new JFrame ("Login Frame");
+//        loginFrame.setSize(400,400); // sized for ease of testing. Needs to be fullscreen for final application
 
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
         JPanel panel = new JPanel();
-        panel.setBackground(Color.WHITE);
         GridBagLayout layout = new GridBagLayout();
         panel.setLayout(layout);
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel username = new JLabel( "Username/Email");
+        JLabel usernameLabel = new JLabel( "Username");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
-        panel.add(username,c);
+        panel.add(usernameLabel,c);
 
         JTextField usernameInput = new JTextField(20);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
         c.gridy = 2;
         panel.add(usernameInput,c);
 
-        JLabel password = new JLabel( "Password");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
+        JLabel passwordLabel = new JLabel( "Password");
         c.gridy = 3;
-        panel.add(password,c);
+        panel.add(passwordLabel,c);
 
         JPasswordField passwordInput = new JPasswordField(20);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
         c.gridy = 4;
         panel.add(passwordInput,c);
 
-        JButton Submit = new JButton();
-        Submit.setText("Submit");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 5;
-        panel.add(Submit,c);
+        JLabel warningLabel = new JLabel( "");
+        c.gridy = 6;
+        panel.add(warningLabel,c);
 
+        JButton submitButton = new JButton("Submit");
 
-        SubmitListener submitListener = new SubmitListener(usernameInput, passwordInput, frame);
-        Submit.addActionListener(submitListener);   //Calls LoginScreen.SubmitListener when button is pressed. Passes password, username, frame
-
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.add(panel);
-        frame.setVisible(true);
-    }
-
-
-    /*
-    class that will validates credentials with server on submit being pressed
-     */
-
-    public static class SubmitListener implements ActionListener {
-
-
-        private JTextField Username;        //not currently used as we can't validate yet
-        private JPasswordField Password;
-        private JFrame Frame;
-
-
-        public SubmitListener(JTextField usernameInput, JPasswordField passwordInput, JFrame frame) {
-            Username = usernameInput;
-            Password = passwordInput;
-            Frame = frame;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Frame.dispose();
-            Main main = new Main();
-
-            // need a method to validate credentials before calling homepage. Get session token
-
+        submitButton.addActionListener(e -> {
             try {
-                Main.homePage();    //initiate homepage method in man
-            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(usernameInput.getText());
+                list.add(passwordInput.getText());
+                Response response = SendRequest.serverRequest1(new Request(RequestTypes.LOGIN, list));
+                if(response.getStatusCode() == 200) {
+                    loginFrame.setVisible(false);
+                    Main.homePage();
+                    Session.SessionToken = (response.getContent()).toString();
+                    Session.Username = usernameInput.getText();
+                }
+                else if(response.getStatusCode() == 401) {
+                    warningLabel.setText("Incorrect username or password");
+                }
+            } catch (IOException | ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
                 ex.printStackTrace();
             }
 
-        }
-    }
+        });
 
+        c.gridy = 5;
+        panel.add(submitButton,c);
+
+        loginFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        loginFrame.setLocationRelativeTo(null);
+        loginFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        loginFrame.add(panel);
+        loginFrame.setVisible(true);
+
+    }
 }

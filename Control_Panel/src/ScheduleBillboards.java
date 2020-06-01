@@ -5,6 +5,12 @@ import java.awt.event.ActionListener;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.Flow;
 
+/**
+ * @author Felix Savins
+ *
+ * Creates frame that shows scheduled billboards and allows billboards to be scheduled
+ */
+
 public class ScheduleBillboards {
     public void main(JFrame frame) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -33,7 +39,6 @@ public class ScheduleBillboards {
             } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
                 ex.printStackTrace();
             }
-
         });
 
         JPanel Sunday = new JPanel();

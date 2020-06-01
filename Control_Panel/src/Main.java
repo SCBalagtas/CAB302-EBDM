@@ -5,13 +5,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Main {
+/**
+ * @author Felix Savins
+ *
+ * Calls initial log in screen and can be used to create new homescreen instance
+ */
 
-    public int validation;
+public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException{
 
-        //Calls login screen on start. Loginscreen not static as we may need to call different instances
         LoginScreen loginScreen = new LoginScreen();
         loginScreen.main();
 

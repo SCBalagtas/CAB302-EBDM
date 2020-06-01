@@ -1,12 +1,26 @@
+import Classes.Request;
+import Classes.Response;
+import Constants.RequestTypes;
+import Constants.Session;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+/**
+ * @author Felix Savins
+ *
+ * Creates frame to allow scheduling of a new billboard
+ */
 
 public class SchedulePopOut implements ActionListener {
 
     public SchedulePopOut() {
-
     }
 
     @Override
@@ -61,6 +75,14 @@ public class SchedulePopOut implements ActionListener {
         c.weighty = 0;
         panel.add(dayCombo,c);
 
+
+        LocalDate now = LocalDate.now();
+        for (int day = 0; day < 7; day++) {
+            dayCombo.addItem(now.plusDays(day).toString());
+        }
+
+
+
         JLabel SelectTime = new JLabel("Select Time");
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -70,14 +92,45 @@ public class SchedulePopOut implements ActionListener {
         c.weighty = 1;
         panel.add(SelectTime,c);
 
-        JComboBox<String> timeCombo = new JComboBox<>();
+
+        JComboBox<String> timeHourCombo = new JComboBox<>();
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 5;
-        c.weightx = 0;
+        c.weightx = 1;
         c.weighty = 0;
-        panel.add(timeCombo,c);
+        panel.add(timeHourCombo,c);
+
+        for (int hour = 0; hour < 24; hour++) {
+            timeHourCombo.addItem(String.format("%02d", hour));
+        }
+
+        JComboBox<String> timeMinCombo = new JComboBox<>();
+        c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 1;
+        c.gridy = 5;
+        c.weightx = 1;
+        c.weighty = 0;
+        panel.add(timeMinCombo,c);
+
+        for (int min = 0; min < 60; min++) {
+            timeMinCombo.addItem(String.format("%02d", min));
+        }
+
+        JComboBox<String> timeSecCombo = new JComboBox<>();
+        c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 2;
+        c.gridy = 5;
+        c.weightx = 1;
+        c.weighty = 0;
+        panel.add(timeSecCombo,c);
+
+        for (int sec = 0; sec < 60; sec++) {
+            timeSecCombo.addItem(String.format("%02d", sec));
+        }
 
         JLabel SelectRepeating = new JLabel("Select repeating interval");
         c = new GridBagConstraints();
@@ -97,11 +150,24 @@ public class SchedulePopOut implements ActionListener {
         c.weighty = 0;
         panel.add(repeatCombo,c);
 
-        JButton confirm = new JButton(new AbstractAction("Confirm") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+
+        JButton confirmButton = new JButton("Confirm");
+        confirmButton.addActionListener(e1 -> {
                 scheduleFrame.dispose();
+                String scheduledTime = dayCombo.getSelectedItem() + "T" +  timeHourCombo.getSelectedItem() + ":" + timeMinCombo.getSelectedItem() + ":" + timeSecCombo.getSelectedItem() + ".000000";
+                System.out.println(scheduledTime);
+
+            ArrayList<String> list = new ArrayList<>();
+            list.add(Session.SessionToken);
+            list.add(scheduledTime);
+
+            try {
+                Response response = SendRequest.serverRequest1(new Request(RequestTypes.CREATE_SCHEDULE, list));
+            } catch (IOException | ClassNotFoundException ex) {
+                ex.printStackTrace();
             }
+
+
         });
 
         c = new GridBagConstraints();
@@ -110,9 +176,7 @@ public class SchedulePopOut implements ActionListener {
         c.gridy = 8;
         c.weightx = 0;
         c.weighty = 0;
-        panel.add(confirm,c);
-
-
+        panel.add(confirmButton,c);
 
         scheduleFrame.setVisible(true);
         scheduleFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
