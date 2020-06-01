@@ -160,4 +160,31 @@ public class Schedules {
             System.err.println(e);
         }
     }
+
+    /**
+     * Delete schedule from the schedules table.
+     *
+     * @param billboardName of the billboard in the schedule.
+     * @param schedule DateTime of the schedule.
+     */
+    public static void deleteScheduleFromDB(String billboardName, LocalDateTime schedule) {
+        // try to delete the schedule from the schedules table
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM schedules WHERE billboardName=? AND schedule=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, billboardName);
+            statement.setObject(2, schedule);
+            statement.executeUpdate();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
 }

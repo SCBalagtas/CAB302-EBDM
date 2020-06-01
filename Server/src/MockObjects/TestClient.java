@@ -229,13 +229,13 @@ public class TestClient {
 
         // create schedule request tests
         ArrayList<String> workingCreateSchedule = new ArrayList<>();
-        workingCreateSchedule.add("TestBillboard1");
+        workingCreateSchedule.add("testBillboard1");
         workingCreateSchedule.add("2020-05-31T23:30:00");
         workingCreateSchedule.add("30");
         workingCreateSchedule.add(token);
 
         ArrayList<String> workingCreateScheduleWithFreq = new ArrayList<>();
-        workingCreateScheduleWithFreq.add("TestBillboard1");
+        workingCreateScheduleWithFreq.add("testBillboard1");
         workingCreateScheduleWithFreq.add("2020-05-31T23:30:00");
         workingCreateScheduleWithFreq.add("30");
         workingCreateScheduleWithFreq.add(token);
@@ -249,13 +249,13 @@ public class TestClient {
         nonexistentBillboardCreateSchedule.add(token);
 
         ArrayList<String> wrongCreateSchedule = new ArrayList<>();
-        wrongCreateSchedule.add("TestBillboard1");
+        wrongCreateSchedule.add("testBillboard1");
         wrongCreateSchedule.add("2020-05-31T23:30:00");
         wrongCreateSchedule.add("30");
         wrongCreateSchedule.add("Fake Token");
 
         ArrayList<String> brokenCreateSchedule = new ArrayList<>();
-        brokenCreateSchedule.add("TestBillboard1");
+        brokenCreateSchedule.add("testBillboard1");
         brokenCreateSchedule.add("2020-05-31T23:30:00");
         brokenCreateSchedule.add("30");
 
@@ -264,6 +264,31 @@ public class TestClient {
         sendRequest(RequestTypes.CREATE_SCHEDULE, nonexistentBillboardCreateSchedule);
         sendRequest(RequestTypes.CREATE_SCHEDULE, wrongCreateSchedule);
         sendRequest(RequestTypes.CREATE_SCHEDULE, brokenCreateSchedule);
+
+        // delete schedule request tests
+        ArrayList<String> workingDeleteSchedule = new ArrayList<>();
+        workingDeleteSchedule.add("testBillboard1");
+        workingDeleteSchedule.add("2020-05-31T23:30:00");
+        workingDeleteSchedule.add(token);
+
+        ArrayList<String> nonexistentDeleteSchedule = new ArrayList<>();
+        nonexistentDeleteSchedule.add("anotherTestBillboard");
+        nonexistentDeleteSchedule.add("2020-05-31T23:30:00");
+        nonexistentDeleteSchedule.add(token);
+
+        ArrayList<String> wrongDeleteSchedule = new ArrayList<>();
+        wrongDeleteSchedule.add("anotherTestBillboard");
+        wrongDeleteSchedule.add("2020-05-31T23:30:00");
+        wrongDeleteSchedule.add("Fake Token");
+
+        ArrayList<String> brokenDeleteSchedule = new ArrayList<>();
+        brokenDeleteSchedule.add("anotherTestBillboard");
+        brokenDeleteSchedule.add("2020-05-31T23:30:00");
+
+        sendRequest(RequestTypes.DELETE_SCHEDULE, workingDeleteSchedule);
+        sendRequest(RequestTypes.DELETE_SCHEDULE, nonexistentDeleteSchedule);
+        sendRequest(RequestTypes.DELETE_SCHEDULE, wrongDeleteSchedule);
+        sendRequest(RequestTypes.DELETE_SCHEDULE, brokenDeleteSchedule);
 
         // delete billboard request tests
         ArrayList<String> workingDeleteBillboard = new ArrayList<>();

@@ -86,6 +86,8 @@ public class Main {
                     ListBillboards.listBillboards(request.getRequestParameters(), sessions, oos);
                 } else if (request.getRequestType().equals(RequestTypes.CREATE_SCHEDULE)) {
                     CreateSchedule.createSchedule(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.DELETE_SCHEDULE)) {
+                    DeleteSchedule.deleteSchedule(request.getRequestParameters(), sessions, oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();
