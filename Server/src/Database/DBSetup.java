@@ -43,7 +43,7 @@ public class DBSetup {
         // sql statement to create the billboards table
         String createBillboards = "CREATE TABLE IF NOT EXISTS billboards "
                 + "(billboardName   VARCHAR(255) PRIMARY KEY, "
-                + "content          TEXT NOT NULL, "
+                + "content          MEDIUMTEXT NOT NULL, "
                 + "creator          VARCHAR(50), "
                 + "creationDate     DATETIME DEFAULT NOW(), "
                 + "updatedAt        DATETIME DEFAULT NOW() ON UPDATE NOW(), "
