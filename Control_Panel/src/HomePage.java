@@ -30,15 +30,17 @@ public class HomePage {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Create");
 
-                Main main = new Main();
+                CreateBillboard createBillboard = new CreateBillboard("testUser", "Create Billboard");
 
                 // call a method to validate credentials before calling homepage
-
+                /*
                 try {
                     Main.createBillboard();
                 } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
                     ex.printStackTrace();
                 }
+
+                 */
 
                 // Close frame using Frame.dispose() and open another or change what's in this frame
             }

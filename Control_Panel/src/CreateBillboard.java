@@ -1,111 +1,213 @@
 import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CreateBillboard extends JFrame implements Runnable {
-    private String BBAuthor;
-    private String BBName;
-    private String BBMsg;
-    private String BBImgUrl;
-    private String BBImgData;
-    private String BBInfo;
-    private String BBPicMode;
+public class CreateBillboard extends JFrame implements Runnable{
+    private String author;
 
-    public CreateBillboard(String title) throws HeadlessException {
+    private String bbName;
+    private Color bbBgColour;
+    private String bbMsg;
+    private Color bbMsgColour;
+
+    private enum ImgType {DATA, URL}
+
+    private ImgType bbImgType;
+    private String bbImgUrl;
+    private String bbImgData;
+    private String bbInfo;
+    private Color bbInfoColour;
+    private String bbPicMode;
+
+    public CreateBillboard(String username, String title) throws HeadlessException {
         super(title);
+
+        // Initial Values
+        author = username;
+
+        bbName = "";
+        bbBgColour = Color.WHITE;
+        bbMsg = "";
+        bbMsgColour = Color.WHITE;
+        bbImgType = ImgType.URL;
+        bbImgUrl = "";
+        bbImgData = "";
+        bbInfo = "";
+        bbInfoColour = Color.WHITE;
+        bbPicMode = "";
+
+        SwingUtilities.invokeLater(this);
     }
 
-    private void CreateGUI() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+    // Update the components of the preview panel
+    private JPanel previewPanelComps(JPanel previewPanel) {
+        JLabel bbNameLbl = new JLabel(bbName, SwingConstants.CENTER);
+        previewPanel.add(bbNameLbl);
+
+        JLabel bbMsgLbl = new JLabel(bbMsg);
+        previewPanel.add(bbMsgLbl);
+
+        JLabel bblInfoLbl = new JLabel(bbInfo);
+        previewPanel.add(bblInfoLbl);
+
+        return previewPanel;
+    }
+
+    // Update the preview panel
+    private void updatePreview(JPanel previewPanel) {
+        previewPanel.removeAll();
+
+        previewPanelComps(previewPanel);
+
+        previewPanel.revalidate();
+        previewPanel.repaint();
+    }
+
+    // Create the full GUI
+    private void createGui() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+
         setVisible(true);
         setMinimumSize(new Dimension(1280, 720));
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        setLayout( new GridLayout(0,1) );
 
-        setLayout(new BorderLayout());
+        // Preview Panel Components
+        JPanel previewPanel = new JPanel( new GridLayout(0, 1));
+        previewPanel.setBackground(Color.WHITE);
+        add(previewPanel);
 
-        JPanel previewPanel = new JPanel();
-        previewPanel.setLayout(new BorderLayout());
-
-        JPanel mainJPanel = new JPanel();
-        mainJPanel.setLayout(new GridBagLayout());
-
-        JPanel submitBtnPanel = new JPanel();
-        submitBtnPanel.setLayout(new GridBagLayout());
-
-        previewPanel.setBackground(Color.BLUE);
-        submitBtnPanel.setBackground(Color.GREEN);
-
-        getContentPane().add(previewPanel, BorderLayout.NORTH);
-        getContentPane().add(mainJPanel, BorderLayout.WEST);
-        getContentPane().add(submitBtnPanel, BorderLayout.SOUTH);
 
         GridBagConstraints gbCons = new GridBagConstraints();
-        gbCons.anchor = GridBagConstraints.LINE_START;
+        gbCons.anchor = GridBagConstraints.LINE_END;
 
-        // Preview Panel Widgets:
-        JLabel bbPreviewLbl = new JLabel("Preview:");
-        previewPanel.add(bbPreviewLbl, BorderLayout.CENTER);
-
-        JTextArea bbPreview = new JTextArea("XML Preview...");
-        previewPanel.add(bbPreview, BorderLayout.CENTER);
-
-        // Main Panel Widgets:
-        // Billboard Author
-        JLabel bbAuthorLbl = new JLabel("Author:");
-        gbCons.gridx = 0;
-        gbCons.gridy = 0;
-        mainJPanel.add(bbAuthorLbl, gbCons);
-
-        JLabel bbAuthor = new JLabel("Test Author");
-        gbCons.gridx = 1;
-        gbCons.gridy = 0;
-        mainJPanel.add(bbAuthor, gbCons);
+        // Main Panel Components
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        add(mainPanel);
 
         // Import and Export Buttons
-        JButton bbImportBtn = new JButton("Import");
-        gbCons.gridx = 0;
-        gbCons.gridy = 1;
-        mainJPanel.add(bbImportBtn, gbCons);
+        gbCons.gridy = 0;
 
-        JButton bbExportBtn = new JButton("Export");
-        gbCons.gridx = 1;
-        gbCons.gridy = 1;
-        mainJPanel.add(bbExportBtn, gbCons);
+        JButton importBtn = new JButton("Import");
+        gbCons.gridx = 3;
+        mainPanel.add(importBtn, gbCons);
+
+        /*
+        importBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+
+                FileNameExtensionFilter xmlFilter = new FileNameExtensionFilter("XML", "xml");
+                fileChooser.setFileFilter(xmlFilter);
+
+                int result = fileChooser.showOpenDialog(fileChooser);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                }
+            }
+        });
+         */
+
+        JButton exportBtn = new JButton("Export");
+        gbCons.gridx = 4;
+        mainPanel.add(exportBtn, gbCons);
+
+        gbCons.anchor = GridBagConstraints.LINE_START;
 
         // Billboard Name
-        // label
-        JLabel bbNameLbl = new JLabel("Name:");
+        gbCons.gridy = 1;
+
+        JLabel nameLbl = new JLabel("Name:");
         gbCons.gridx = 0;
-        gbCons.gridy = 2;
-        mainJPanel.add(bbNameLbl, gbCons);
+        mainPanel.add(nameLbl, gbCons);
 
-        // text field
-        JTextField bbNameTf = new JTextField(20);
+        JTextField nameTf = new JTextField(30);
         gbCons.gridx = 1;
-        gbCons.gridy = 2;
-        mainJPanel.add(bbNameTf, gbCons);
+        mainPanel.add(nameTf, gbCons);
 
-        // Billboard Message
-        // label
-        JLabel bbMsgLbl = new JLabel("Message:");
+        nameTf.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                bbName = nameTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                bbName = nameTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                bbName = nameTf.getText();
+                updatePreview(previewPanel);
+            }
+        });
+
+        // Background Colour
+        gbCons.gridy = 2;
+
+        JLabel bgColLbl = new JLabel("Background Colour:");
         gbCons.gridx = 0;
-        gbCons.gridy = 3;
-        mainJPanel.add(bbMsgLbl, gbCons);
+        mainPanel.add(bgColLbl, gbCons);
 
-        // text field
-        JTextField bbMsgTf = new JTextField(20);
+        JButton bgColCc = new JButton("Change Colour");
         gbCons.gridx = 1;
-        gbCons.gridy = 3;
-        mainJPanel.add(bbMsgTf, gbCons);
+        mainPanel.add(bgColCc, gbCons);
 
-        JButton bbMsgCc = new JButton("Change Colour");
-        gbCons.fill = GridBagConstraints.NONE;
+        bgColCc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
+
+                if (color != null) {
+                    System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                }
+            }
+        });
+
+        // Message
+        gbCons.gridy = 3;
+
+        JLabel msgLbl = new JLabel("Message:");
+        gbCons.gridx = 0;
+        mainPanel.add(msgLbl, gbCons);
+
+        JTextField msgTf = new JTextField(50);
+        gbCons.gridx = 1;
+        mainPanel.add(msgTf, gbCons);
+
+        msgTf.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                bbMsg = msgTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                bbMsg = msgTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                bbMsg = msgTf.getText();
+                updatePreview(previewPanel);
+            }
+
+        });
+
+        JButton msgColCc = new JButton("Change Colour");
         gbCons.gridx = 2;
-        gbCons.gridy = 3;
-        mainJPanel.add(bbMsgCc, gbCons);
+        mainPanel.add(msgColCc, gbCons);
 
-        bbMsgCc.addActionListener(new ActionListener() {
+        msgColCc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
@@ -117,108 +219,99 @@ public class CreateBillboard extends JFrame implements Runnable {
             }
         });
 
-        // Billboard Picture
-        BBPicMode = "url"; // url mode is the initial value when uploading images
 
-        JPanel bbPicUrlPanel = new JPanel();
-        bbPicUrlPanel.setLayout(new GridBagLayout());
-        bbPicUrlPanel.setBackground(Color.GREEN);
+        // Image
+        gbCons.gridy = 4;
+
+        JTextField imgUrlTf = new JTextField("",50);
+        gbCons.gridx = 1;
+        mainPanel.add(imgUrlTf, gbCons);
+
+        JTextField imgDataTf = new JTextField("",50);
+        gbCons.gridx = 1;
+        mainPanel.add(imgDataTf, gbCons);
+        imgDataTf.setVisible(false);
+
+        JButton imgDataBtn = new JButton("Upload");
         gbCons.gridx = 2;
-        gbCons.gridy = 4;
-        mainJPanel.add(bbPicUrlPanel, gbCons);
+        mainPanel.add(imgDataBtn, gbCons);
+        imgDataBtn.setVisible(false);
 
-        // URL label & text field
-        JLabel bbPicUrlLbl = new JLabel("Image URL:");
+
+        JPanel imgOptionsPanel = new JPanel();
+        imgOptionsPanel.setLayout(new GridLayout(1,0));
         gbCons.gridx = 0;
-        gbCons.gridy = 0;
-        bbPicUrlPanel.add(bbPicUrlLbl, gbCons);
+        mainPanel.add(imgOptionsPanel, gbCons);
 
-        JTextField bbPicUrlTf = new JTextField("", 40);
-        gbCons.fill = GridBagConstraints.BOTH;
-        gbCons.gridx = 1;
-        gbCons.gridy = 0;
-        bbPicUrlPanel.add(bbPicUrlTf, gbCons);
-
-
-        JPanel bbPicDataPanel = new JPanel();
-        bbPicDataPanel.setLayout(new GridBagLayout());
-        bbPicDataPanel.setBackground(Color.GREEN);
-        gbCons.gridx = 2;
-        gbCons.gridy = 4;
-        mainJPanel.add(bbPicDataPanel, gbCons);
-        bbPicDataPanel.setVisible(false);
-
-        JLabel bbUploadLbl = new JLabel("Image Location...");
-        gbCons.gridx = 0;
-        gbCons.gridy = 0;
-        bbPicDataPanel.add(bbUploadLbl, gbCons);
-
-        JButton bbUploadBtn = new JButton("Upload");
-        gbCons.gridx = 1;
-        gbCons.gridy = 0;
-        bbPicDataPanel.add(bbUploadBtn, gbCons);
-
-        // bbPic Options
-        JPanel bbPicPanel = new JPanel();
-        bbPicPanel.setLayout(new GridLayout(1,0));
-        gbCons.gridx = 1;
-        gbCons.gridy = 4;
-        mainJPanel.add(bbPicPanel, gbCons);
-
-        JRadioButton bbPicUrlRb = new JRadioButton("URL");
-        bbPicUrlRb.setSelected(true);
-        bbPicUrlRb.addActionListener(new ActionListener() {
+        JRadioButton imgUrlRb = new JRadioButton("URL");
+        imgUrlRb.setSelected(true);
+        imgUrlRb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BBPicMode = "url";
-                bbPicUrlPanel.setVisible(true);
-                bbPicDataPanel.setVisible(false);
-
+                imgUrlTf.setVisible(true);
+                imgDataTf.setVisible(false);
+                imgDataBtn.setVisible(false);
             }
         });
 
 
-        JRadioButton bbPicDataRb = new JRadioButton("Upload");
-        bbPicDataRb.addActionListener(new ActionListener() {
+        JRadioButton imgDataRb = new JRadioButton("Upload");
+        imgDataRb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BBPicMode = "data";
-                bbPicUrlPanel.setVisible(false);
-                bbPicDataPanel.setVisible(true);
+                imgUrlTf.setVisible(false);
+                imgDataTf.setVisible(true);
+                imgDataBtn.setVisible(true);
             }
         });
 
         ButtonGroup group = new ButtonGroup();
-        group.add(bbPicUrlRb);
-        group.add(bbPicDataRb);
+        group.add(imgUrlRb);
+        group.add(imgDataRb);
 
-        bbPicPanel.add(bbPicUrlRb);
-        bbPicPanel.add(bbPicDataRb);
+        imgOptionsPanel.add(imgUrlRb);
+        imgOptionsPanel.add(imgDataRb);
 
+        // Information
+        gbCons.gridy = 5;
 
-        // Billboard Information
-        // label
-        JLabel bbInfoLbl = new JLabel("Information:");
+        JLabel infoLbl = new JLabel("Information:");
         gbCons.gridx = 0;
-        gbCons.gridy = 5;
-        mainJPanel.add(bbInfoLbl, gbCons);
+        mainPanel.add(infoLbl, gbCons);
 
-        // text field
-        JTextField bbInfoTf = new JTextField(20);
+        JTextField infoTf = new JTextField(50);
         gbCons.gridx = 1;
-        gbCons.gridy = 5;
-        mainJPanel.add(bbInfoTf, gbCons);
+        mainPanel.add(infoTf, gbCons);
 
-        JButton bbInfoCc = new JButton("Change Colour");
-        gbCons.fill = GridBagConstraints.NONE;
+        infoTf.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                bbInfo = infoTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                bbInfo = infoTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                bbInfo = infoTf.getText();
+                updatePreview(previewPanel);
+            }
+
+        });
+
+        JButton infoColCc = new JButton("Change Colour");
         gbCons.gridx = 2;
-        gbCons.gridy = 5;
-        mainJPanel.add(bbInfoCc, gbCons);
+        mainPanel.add(infoColCc, gbCons);
 
-        bbInfoCc.addActionListener(new ActionListener() {
+        infoColCc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color color = JColorChooser.showDialog(new JFrame(),"Change Information Colour", Color.WHITE);
+                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
 
                 if (color != null) {
                     System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
@@ -227,35 +320,34 @@ public class CreateBillboard extends JFrame implements Runnable {
             }
         });
 
+        // Main Panel Components
+        JPanel submitPanel = new JPanel(new FlowLayout());
+        add(submitPanel);
 
-        // Submit Panel Widgets:
-        // Create and Cancel Buttons
-        JButton bbCancelBtn = new JButton("Cancel");
-        gbCons.gridx = 0;
-        gbCons.gridy = 0;
-        submitBtnPanel.add(bbCancelBtn, gbCons);
 
-        bbCancelBtn.addActionListener(new ActionListener() {
+        JButton cancelBtn = new JButton("Cancel");
+        submitPanel.add(cancelBtn);
+
+        cancelBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Object source = e.getSource();
                 dispose();
             }
         });
 
-        JButton bbCreateBtn = new JButton("Create Billboard");
-        gbCons.gridx = 1;
-        gbCons.gridy = 0;
-        submitBtnPanel.add(bbCreateBtn, gbCons);
+        JButton createBtn = new JButton("Create");
+        submitPanel.add(createBtn);
 
-        bbCreateBtn.addActionListener(new ActionListener() {
+        createBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Object source = e.getSource();
+                // validate variables
 
-                // validate fields
+                // Validate with the server
 
-                // exit window
+                // show success/fail dialogues
+
+                //dispose
                 dispose();
             }
         });
@@ -264,7 +356,7 @@ public class CreateBillboard extends JFrame implements Runnable {
     @Override
     public void run() {
         try {
-            CreateGUI();
+            createGui();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedLookAndFeelException e) {
@@ -276,9 +368,4 @@ public class CreateBillboard extends JFrame implements Runnable {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new CreateBillboard("Create Billboard"));
-    }
 }
-
-
