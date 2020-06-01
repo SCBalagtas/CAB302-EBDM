@@ -76,6 +76,10 @@ public class TestClient {
         workingGetPermissions.add("testUser1");
         workingGetPermissions.add(token);
 
+        ArrayList<String> nonexistentGetPermissions = new ArrayList<>();
+        nonexistentGetPermissions.add("anotherTestUser");
+        nonexistentGetPermissions.add(token);
+
         ArrayList<String> wrongGetPermissions = new ArrayList<>();
         wrongGetPermissions.add("testUser1");
         wrongGetPermissions.add("Fake Token");
@@ -84,6 +88,7 @@ public class TestClient {
         brokenGetPermissions.add("testUser1");
 
         sendRequest(RequestTypes.GET_PERMISSIONS, workingGetPermissions);
+        sendRequest(RequestTypes.GET_PERMISSIONS, nonexistentGetPermissions);
         sendRequest(RequestTypes.GET_PERMISSIONS, wrongGetPermissions);
         sendRequest(RequestTypes.GET_PERMISSIONS, brokenGetPermissions);
 
@@ -92,6 +97,11 @@ public class TestClient {
         workingSetPermissions.add("testUser1");
         workingSetPermissions.add("[1, 2, 3]");
         workingSetPermissions.add(token);
+
+        ArrayList<String> nonexistentSetPermissions = new ArrayList<>();
+        nonexistentSetPermissions.add("anotherTestUser");
+        nonexistentSetPermissions.add("[1, 2, 3]");
+        nonexistentSetPermissions.add(token);
 
         ArrayList<String> wrongSetPermissions = new ArrayList<>();
         wrongSetPermissions.add("admin");
@@ -103,6 +113,7 @@ public class TestClient {
         brokenSetPermissions.add("[1, 2, 3]");
 
         sendRequest(RequestTypes.SET_PERMISSIONS, workingSetPermissions);
+        sendRequest(RequestTypes.SET_PERMISSIONS, nonexistentSetPermissions);
         sendRequest(RequestTypes.SET_PERMISSIONS, wrongSetPermissions);
         sendRequest(RequestTypes.SET_PERMISSIONS, brokenSetPermissions);
 
@@ -117,6 +128,11 @@ public class TestClient {
         workingSetUserPassword.add("password123");
         workingSetUserPassword.add(token);
 
+        ArrayList<String> nonexistentSetUserPassword = new ArrayList<>();
+        nonexistentSetUserPassword.add("anotherTestUser");
+        nonexistentSetUserPassword.add("password123");
+        nonexistentSetUserPassword.add(token);
+
         ArrayList<String> wrongSetUserPassword = new ArrayList<>();
         wrongSetUserPassword.add("testUser1");
         wrongSetUserPassword.add("password123");
@@ -128,6 +144,7 @@ public class TestClient {
 
         sendRequest(RequestTypes.SET_PASSWORD, workingSetOwnPassword);
         sendRequest(RequestTypes.SET_PASSWORD, workingSetUserPassword);
+        sendRequest(RequestTypes.SET_PASSWORD, nonexistentSetUserPassword);
         sendRequest(RequestTypes.SET_PASSWORD, wrongSetUserPassword);
         sendRequest(RequestTypes.SET_PASSWORD, brokenSetUserPassword);
 
@@ -135,6 +152,10 @@ public class TestClient {
         ArrayList<String> workingDeleteUser = new ArrayList<>();
         workingDeleteUser.add("testUser1");
         workingDeleteUser.add(token);
+
+        ArrayList<String> nonexistentDeleteUser = new ArrayList<>();
+        nonexistentDeleteUser.add("anotherTestUser");
+        nonexistentDeleteUser.add(token);
 
         ArrayList<String> wrongDeleteUser = new ArrayList<>();
         wrongDeleteUser.add("admin");
@@ -144,6 +165,7 @@ public class TestClient {
         brokenDeleteUser.add("testUser1");
 
         sendRequest(RequestTypes.DELETE_USER, workingDeleteUser);
+        sendRequest(RequestTypes.DELETE_USER, nonexistentDeleteUser);
         sendRequest(RequestTypes.DELETE_USER, wrongDeleteUser);
         sendRequest(RequestTypes.DELETE_USER, brokenDeleteUser);
 
