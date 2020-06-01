@@ -34,18 +34,10 @@ public class GetUserPermissions {
         } else {
             // check if token from parameters is valid and if session token has not yet expired
             if (sessions.containsKey(parameters.get(1)) && !hasTokenExpired(sessions, parameters.get(1))) {
-                // check if user is attempting to get their own permissions
-                if (parameters.get(0).equals(sessions.get(parameters.get(1)).get(0))) {
-                    // get the user's permissions
-                    userPermissions = Users.getUserPermissionsFromDB(parameters.get(0));
-                    if (userPermissions.isEmpty()) {
-                        oos.writeObject(new Response(StatusCodes.NO_CONTENT, userPermissions));
-                    } else {
-                        oos.writeObject(new Response(StatusCodes.OK, userPermissions));
-                    }
-                } else {
-                    // check if the user has the "Edit Users" permission
-                    if (Users.userHasPermission(sessions.get(parameters.get(1)).get(0), ServerPermissions.EDIT_USERS)) {
+                // check if the user exists
+                if (Users.doesUserExists(parameters.get(0))) {
+                    // check if user is attempting to get their own permissions
+                    if (parameters.get(0).equals(sessions.get(parameters.get(1)).get(0))) {
                         // get the user's permissions
                         userPermissions = Users.getUserPermissionsFromDB(parameters.get(0));
                         if (userPermissions.isEmpty()) {
@@ -54,8 +46,21 @@ public class GetUserPermissions {
                             oos.writeObject(new Response(StatusCodes.OK, userPermissions));
                         }
                     } else {
-                        oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
+                        // check if the user has the "Edit Users" permission
+                        if (Users.userHasPermission(sessions.get(parameters.get(1)).get(0), ServerPermissions.EDIT_USERS)) {
+                            // get the user's permissions
+                            userPermissions = Users.getUserPermissionsFromDB(parameters.get(0));
+                            if (userPermissions.isEmpty()) {
+                                oos.writeObject(new Response(StatusCodes.NO_CONTENT, userPermissions));
+                            } else {
+                                oos.writeObject(new Response(StatusCodes.OK, userPermissions));
+                            }
+                        } else {
+                            oos.writeObject(new Response(StatusCodes.FORBIDDEN, "Missing Permissions"));
+                        }
                     }
+                } else {
+                    oos.writeObject(new Response(StatusCodes.INTERNAL_ERROR, "User Does Not Exist"));
                 }
             } else {
                 oos.writeObject(new Response(StatusCodes.UNAUTHORISED, "Unauthorised Request"));

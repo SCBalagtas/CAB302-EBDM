@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class Billboards {
     /**
-     * Check if the billboard name already exists in the billboards table.
+     * Check if the billboardName already exists in the billboards table.
      *
      * @param billboardName of the billboard.
      * @return true if the billboard already exists in the billboards table.

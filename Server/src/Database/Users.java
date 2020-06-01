@@ -13,6 +13,47 @@ import java.util.List;
 
 public class Users {
     /**
+     * Check if the userName already exists in the users table.
+     *
+     * @param userName of the user.
+     * @return true if the user already exists in the users table.
+     */
+    public static boolean doesUserExists(String userName) {
+        // try and check if the userName already exists
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT userName FROM users WHERE userName=?"
+            );
+            statement.clearParameters();
+            statement.setString(1, userName);
+            ResultSet resultSet = statement.executeQuery();
+
+            // return true if result set is not empty
+            if (resultSet.next()) {
+                // close result set
+                resultSet.close();
+
+                // close statement and connection object
+                statement.close();
+                connection.close();
+                return true;
+            }
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            statement.close();
+            connection.close();
+
+            return false;
+        } catch (SQLException e) {
+            return true;
+        }
+    }
+
+    /**
      * Gets the users credentials from the database.
      *
      * @param userName of the user.
