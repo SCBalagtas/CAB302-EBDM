@@ -1,7 +1,12 @@
 import javax.imageio.ImageIO;
+import javax.lang.model.element.Element;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -126,10 +131,12 @@ public class CreateBillboard extends JFrame implements Runnable{
         gbCons.gridy = 0;
 
         JButton importBtn = new JButton("Import");
+        importBtn.setEnabled(false);
         gbCons.gridx = 3;
         mainPanel.add(importBtn, gbCons);
 
         JButton exportBtn = new JButton("Export");
+        exportBtn.setEnabled(false);
         gbCons.gridx = 4;
         mainPanel.add(exportBtn, gbCons);
 
@@ -185,7 +192,7 @@ public class CreateBillboard extends JFrame implements Runnable{
                 if (color != null) {
                     bbBgColour = color;
                     updatePreview(previewPanel);
-                    System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                    //System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 }
             }
         });
@@ -234,7 +241,7 @@ public class CreateBillboard extends JFrame implements Runnable{
                 if (color != null) {
                     bbMsgColour = color;
                     updatePreview(previewPanel);
-                    System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                    //System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 }
 
             }
@@ -297,6 +304,7 @@ public class CreateBillboard extends JFrame implements Runnable{
 
 
         JRadioButton imgDataRb = new JRadioButton("Upload");
+        imgDataRb.setEnabled(false);
         imgDataRb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -357,7 +365,7 @@ public class CreateBillboard extends JFrame implements Runnable{
                 if (color != null) {
                     bbInfoColour = color;
                     updatePreview(previewPanel);
-                    System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                    //System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 }
 
             }
@@ -382,13 +390,65 @@ public class CreateBillboard extends JFrame implements Runnable{
         createBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // validate variables
+                /*
+                    private String bbName;
+                    private Color bbBgColour;
+                    private String bbMsg;
+                    private Color bbMsgColour;
 
-                // Validate with the server
+                    private enum ImgType {DATA, URL}
 
-                // show success/fail dialogues
+                    private ImgType bbImgType;
+                    private String bbImgUrl;
+                    private String bbImgData;
+                    private String bbInfo;
+                    private Color bbInfoColour;
+                    private String bbPicMode;
+                 */
 
-                //dispose
+                String bbXml = String.format(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\">" +
+                        "<billboard background=\"#%02x%02x%02x\">",
+                        bbBgColour.getRed(), bbBgColour.getGreen(), bbBgColour.getGreen()
+                );
+
+                if (bbMsgColour != null && bbMsg !="") {
+                    bbXml = bbXml + String.format(
+                            "<message colour=\"#%02x%02x%02x\">%s</message>",
+                            bbMsgColour.getRed(), bbMsgColour.getGreen(), bbMsgColour.getGreen(), bbMsg
+                    );
+                } else if (bbMsg !="") {
+                    bbXml = bbXml + String.format(
+                            "<message>%s</message>",
+                            bbMsg
+                    );
+                }
+
+                if (bbImgUrl != "" && imgUrlRb.isSelected()) {
+                    bbXml = bbXml + String.format(
+                            "<picture url=\"%s\"/>",
+                            bbImgUrl
+                    );
+                }
+
+                if (bbInfoColour != null && bbInfo !="") {
+                    bbXml = bbXml + String.format(
+                            "<information colour=\"#%02x%02x%02x\">%s</information>",
+                            bbInfoColour.getRed(), bbInfoColour.getGreen(), bbInfoColour.getGreen(), bbInfo
+                    );
+                } else if (bbInfo !="") {
+                    bbXml = bbXml + String.format(
+                            "<information>%s</information>",
+                            bbInfo
+                    );
+                }
+
+                bbXml = bbXml + "</billboard>";
+                System.out.println(bbXml);
+
+
+
+                //dispose window
                 dispose();
             }
         });
