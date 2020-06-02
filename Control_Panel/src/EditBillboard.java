@@ -1,15 +1,23 @@
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class CreateBillboard extends JFrame implements Runnable{
+public class EditBillboard extends JFrame implements Runnable{
     private String author;
 
     private String bbName;
@@ -26,22 +34,60 @@ public class CreateBillboard extends JFrame implements Runnable{
     private Color bbInfoColour;
     private String bbPicMode;
 
-    public CreateBillboard(String username) throws HeadlessException {
-        setTitle("Create Billboard");
+    public static Document loadXmlString(String xml) throws Exception
+    {
+        DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFac.newDocumentBuilder();
+        InputSource source = new InputSource(new StringReader(xml));
+        return builder.parse(source);
+    }
 
-        // Initial Values
-        author = username;
+    public static Color hexStringToRgb(String string) {
+        return new Color(
+                Integer.valueOf( string.substring( 1, 3 ), 16 ),
+                Integer.valueOf( string.substring( 3, 5 ), 16 ),
+                Integer.valueOf( string.substring( 5, 7 ), 16 ) );
+    }
 
-        bbName = "";
-        bbBgColour = Color.WHITE;
-        bbMsg = "";
-        bbMsgColour = Color.BLACK;
-        bbImgType = ImgType.URL;
-        bbImgUrl = "";
-        bbImgData = "";
-        bbInfo = "";
-        bbInfoColour = Color.BLACK;
-        bbPicMode = "";
+    public EditBillboard(String billboardName, String xmlString) {
+        setTitle("Edit Billboard");
+
+        Document xml;
+        try {
+            xml = loadXmlString(xmlString);
+            xml.getDocumentElement().normalize();
+
+            bbName = billboardName;
+
+            Element element = (Element) xml.getElementsByTagName("billboard").item(0);
+            System.out.println(element.getAttribute("background"));
+            bbBgColour = hexStringToRgb(element.getAttribute("background"));
+
+            bbMsg = xml.getElementsByTagName("message").item(0).getTextContent();
+
+            element = (Element) xml.getElementsByTagName("message").item(0);
+            System.out.println(element.getAttribute("colour"));
+            bbMsgColour = hexStringToRgb(element.getAttribute("colour"));
+
+            element = (Element) xml.getElementsByTagName("picture").item(0);
+            if (element.getAttribute("url") != "") {
+                bbImgUrl = element.getAttribute("url");
+            } else if (element.getAttribute("data") != "") {
+                bbImgData = element.getAttribute("data");
+            }
+
+            bbInfo = xml.getElementsByTagName("information").item(0).getTextContent();
+            element = (Element) xml.getElementsByTagName("information").item(0);
+            System.out.println(element.getAttribute("colour"));
+            bbInfoColour = hexStringToRgb(element.getAttribute("colour"));
+            //bbInfoColour = Color.BLACK;
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         SwingUtilities.invokeLater(this);
     }
 
@@ -55,22 +101,22 @@ public class CreateBillboard extends JFrame implements Runnable{
 
         if (bbImgUrl != ""){
 
-        Image image = null;
-        URL url = null;
-        try {
-            url = new URL(bbImgUrl);
-            image = ImageIO.read(url);
+            Image image = null;
+            URL url = null;
+            try {
+                url = new URL(bbImgUrl);
+                image = ImageIO.read(url);
 
-            JLabel bbImgLbl = new JLabel(new ImageIcon(image), SwingConstants.CENTER);
-            bbImgLbl.setMaximumSize(new Dimension(480, 360));
-            bbImgLbl.setSize(new Dimension(480, 360));
-            previewPanel.add(bbImgLbl);
+                JLabel bbImgLbl = new JLabel(new ImageIcon(image), SwingConstants.CENTER);
+                bbImgLbl.setMaximumSize(new Dimension(480, 360));
+                bbImgLbl.setSize(new Dimension(480, 360));
+                previewPanel.add(bbImgLbl);
 
-        } catch (MalformedURLException e) {
-            System.out.println("Malformed URL");
-        } catch (IOException e) {
-            System.out.println("Can not load file");
-        }
+            } catch (MalformedURLException e) {
+                //System.out.println("Malformed URL");
+            } catch (IOException e) {
+                //System.out.println("Can not load file");
+            }
 
         }
 
@@ -111,6 +157,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         previewPanel.setPreferredSize(dimension);
         previewPanel.setMaximumSize(dimension);
 
+        updatePreview(previewPanel);
         add(previewPanel, BorderLayout.PAGE_START);
 
 
@@ -143,29 +190,9 @@ public class CreateBillboard extends JFrame implements Runnable{
         gbCons.gridx = 0;
         mainPanel.add(nameLbl, gbCons);
 
-        JTextField nameTf = new JTextField(30);
+        JLabel nameTf = new JLabel(bbName);
         gbCons.gridx = 1;
         mainPanel.add(nameTf, gbCons);
-
-        nameTf.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                bbName = nameTf.getText();
-                updatePreview(previewPanel);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                bbName = nameTf.getText();
-                updatePreview(previewPanel);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                bbName = nameTf.getText();
-                updatePreview(previewPanel);
-            }
-        });
 
         // Background Colour
         gbCons.gridy = 2;
@@ -181,7 +208,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         bgColCc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
+                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", bbBgColour);
 
                 if (color != null) {
                     bbBgColour = color;
@@ -199,6 +226,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         mainPanel.add(msgLbl, gbCons);
 
         JTextField msgTf = new JTextField(50);
+        msgTf.setText(bbMsg);
         gbCons.gridx = 1;
         mainPanel.add(msgTf, gbCons);
 
@@ -230,7 +258,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         msgColCc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
+                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", bbMsgColour);
 
                 if (color != null) {
                     bbMsgColour = color;
@@ -246,6 +274,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         gbCons.gridy = 4;
 
         JTextField imgUrlTf = new JTextField("",50);
+        imgUrlTf.setText(bbImgUrl);
         gbCons.gridx = 1;
         mainPanel.add(imgUrlTf, gbCons);
 
@@ -296,7 +325,6 @@ public class CreateBillboard extends JFrame implements Runnable{
             }
         });
 
-
         JRadioButton imgDataRb = new JRadioButton("Upload");
         imgDataRb.setEnabled(false);
         imgDataRb.addActionListener(new ActionListener() {
@@ -323,6 +351,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         mainPanel.add(infoLbl, gbCons);
 
         JTextField infoTf = new JTextField(50);
+        infoTf.setText(bbInfo);
         gbCons.gridx = 1;
         mainPanel.add(infoTf, gbCons);
 
@@ -354,7 +383,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         infoColCc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
+                Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", bbInfoColour);
 
                 if (color != null) {
                     bbInfoColour = color;
@@ -386,7 +415,7 @@ public class CreateBillboard extends JFrame implements Runnable{
             public void actionPerformed(ActionEvent e) {
                 String bbXml = String.format(
                         "<?xml version=\"1.0\" encoding=\"UTF-8\">" +
-                        "<billboard background=\"#%02x%02x%02x\">",
+                                "<billboard background=\"#%02x%02x%02x\">",
                         bbBgColour.getRed(), bbBgColour.getGreen(), bbBgColour.getGreen()
                 );
 

@@ -30,7 +30,7 @@ public class HomePage {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Create");
 
-                CreateBillboard createBillboard = new CreateBillboard("testUser", "Create Billboard");
+                CreateBillboard createBillboard = new CreateBillboard("testUser");
 
                 // call a method to validate credentials before calling homepage
                 /*
