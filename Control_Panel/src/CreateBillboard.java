@@ -44,13 +44,14 @@ public class CreateBillboard extends JFrame implements Runnable{
 
     // Update the components of the preview panel
     private JPanel previewPanelComps(JPanel previewPanel) {
-        JLabel bbNameLbl = new JLabel(bbName, SwingConstants.CENTER);
-        previewPanel.add(bbNameLbl);
-
-        JLabel bbMsgLbl = new JLabel(bbMsg);
+        JLabel bbMsgLbl = new JLabel(bbMsg, SwingConstants.CENTER);
+        bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, 25));
+        bbMsgLbl.setForeground(bbMsgColour); // change the colour of the font
         previewPanel.add(bbMsgLbl);
 
-        JLabel bblInfoLbl = new JLabel(bbInfo);
+        JLabel bblInfoLbl = new JLabel(bbInfo, SwingConstants.CENTER);
+        bblInfoLbl.setFont(new Font("San Serif", Font.PLAIN, 16));
+        bblInfoLbl.setForeground(bbInfoColour); // change the colour of the font
         previewPanel.add(bblInfoLbl);
 
         return previewPanel;
@@ -61,6 +62,7 @@ public class CreateBillboard extends JFrame implements Runnable{
         previewPanel.removeAll();
 
         previewPanelComps(previewPanel);
+        previewPanel.setBackground(bbBgColour);
 
         previewPanel.revalidate();
         previewPanel.repaint();
@@ -93,24 +95,6 @@ public class CreateBillboard extends JFrame implements Runnable{
         JButton importBtn = new JButton("Import");
         gbCons.gridx = 3;
         mainPanel.add(importBtn, gbCons);
-
-        /*
-        importBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-
-                FileNameExtensionFilter xmlFilter = new FileNameExtensionFilter("XML", "xml");
-                fileChooser.setFileFilter(xmlFilter);
-
-                int result = fileChooser.showOpenDialog(fileChooser);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-                }
-            }
-        });
-         */
 
         JButton exportBtn = new JButton("Export");
         gbCons.gridx = 4;
@@ -166,6 +150,8 @@ public class CreateBillboard extends JFrame implements Runnable{
                 Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
 
                 if (color != null) {
+                    bbBgColour = color;
+                    updatePreview(previewPanel);
                     System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 }
             }
@@ -213,6 +199,8 @@ public class CreateBillboard extends JFrame implements Runnable{
                 Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
 
                 if (color != null) {
+                    bbMsgColour = color;
+                    updatePreview(previewPanel);
                     System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 }
 
@@ -314,6 +302,8 @@ public class CreateBillboard extends JFrame implements Runnable{
                 Color color = JColorChooser.showDialog(new JFrame(),"Change Message Colour", Color.WHITE);
 
                 if (color != null) {
+                    bbInfoColour = color;
+                    updatePreview(previewPanel);
                     System.out.println(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 }
 
