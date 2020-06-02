@@ -1,9 +1,13 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class CreateBillboard extends JFrame implements Runnable{
     private String author;
@@ -31,12 +35,12 @@ public class CreateBillboard extends JFrame implements Runnable{
         bbName = "";
         bbBgColour = Color.WHITE;
         bbMsg = "";
-        bbMsgColour = Color.WHITE;
+        bbMsgColour = Color.BLACK;
         bbImgType = ImgType.URL;
         bbImgUrl = "";
         bbImgData = "";
         bbInfo = "";
-        bbInfoColour = Color.WHITE;
+        bbInfoColour = Color.BLACK;
         bbPicMode = "";
 
         SwingUtilities.invokeLater(this);
@@ -48,6 +52,29 @@ public class CreateBillboard extends JFrame implements Runnable{
         bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, 25));
         bbMsgLbl.setForeground(bbMsgColour); // change the colour of the font
         previewPanel.add(bbMsgLbl);
+
+
+        if (bbImgUrl != ""){
+
+        Image image = null;
+        URL url = null;
+        try {
+            url = new URL(bbImgUrl);
+            image = ImageIO.read(url);
+
+            JLabel bbImgLbl = new JLabel(new ImageIcon(image), SwingConstants.CENTER);
+            bbImgLbl.setMaximumSize(new Dimension(480, 360));
+            bbImgLbl.setSize(new Dimension(480, 360));
+            previewPanel.add(bbImgLbl);
+
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed URL");
+        } catch (IOException e) {
+            System.out.println("Can not load file");
+        }
+
+        }
+
 
         JLabel bblInfoLbl = new JLabel(bbInfo, SwingConstants.CENTER);
         bblInfoLbl.setFont(new Font("San Serif", Font.PLAIN, 16));
@@ -74,12 +101,18 @@ public class CreateBillboard extends JFrame implements Runnable{
         setVisible(true);
         setMinimumSize(new Dimension(1280, 720));
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        setLayout( new GridLayout(0,1) );
+        setLayout( new BorderLayout());
 
         // Preview Panel Components
         JPanel previewPanel = new JPanel( new GridLayout(0, 1));
         previewPanel.setBackground(Color.WHITE);
-        add(previewPanel);
+
+        Dimension dimension = new Dimension(720, 480);
+        previewPanel.setMinimumSize(dimension);
+        previewPanel.setPreferredSize(dimension);
+        previewPanel.setMaximumSize(dimension);
+
+        add(previewPanel, BorderLayout.PAGE_START);
 
 
         GridBagConstraints gbCons = new GridBagConstraints();
@@ -87,7 +120,7 @@ public class CreateBillboard extends JFrame implements Runnable{
 
         // Main Panel Components
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        add(mainPanel);
+        add(mainPanel, BorderLayout.PAGE_END);
 
         // Import and Export Buttons
         gbCons.gridy = 0;
@@ -215,6 +248,26 @@ public class CreateBillboard extends JFrame implements Runnable{
         gbCons.gridx = 1;
         mainPanel.add(imgUrlTf, gbCons);
 
+        imgUrlTf.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                bbImgUrl = imgUrlTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                bbImgUrl = imgUrlTf.getText();
+                updatePreview(previewPanel);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                bbImgUrl = imgUrlTf.getText();
+                updatePreview(previewPanel);
+            }
+        });
+
         JTextField imgDataTf = new JTextField("",50);
         gbCons.gridx = 1;
         mainPanel.add(imgDataTf, gbCons);
@@ -310,13 +363,10 @@ public class CreateBillboard extends JFrame implements Runnable{
             }
         });
 
-        // Main Panel Components
-        JPanel submitPanel = new JPanel(new FlowLayout());
-        add(submitPanel);
-
-
+        gbCons.gridy = 6;
         JButton cancelBtn = new JButton("Cancel");
-        submitPanel.add(cancelBtn);
+        gbCons.gridx = 3;
+        mainPanel.add(cancelBtn, gbCons);
 
         cancelBtn.addActionListener(new ActionListener() {
             @Override
@@ -326,7 +376,8 @@ public class CreateBillboard extends JFrame implements Runnable{
         });
 
         JButton createBtn = new JButton("Create");
-        submitPanel.add(createBtn);
+        gbCons.gridx = 4;
+        mainPanel.add(createBtn, gbCons);
 
         createBtn.addActionListener(new ActionListener() {
             @Override
