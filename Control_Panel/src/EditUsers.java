@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,9 +44,14 @@ public class EditUsers {
         c.gridy = 1;
         panel.add(userList,c);
 
+        JLabel deletionWarning = new JLabel();
 
 
-        JButton deleteUser = new JButton(new AbstractAction("Delete User") {
+
+
+
+
+                JButton deleteUser = new JButton(new AbstractAction("Delete User") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> parameters = new ArrayList<>();
@@ -55,11 +61,12 @@ public class EditUsers {
                 if(!userList.isSelectionEmpty()) {
                     try {
                         Response response = SendRequest.serverRequest1(new Request(RequestTypes.DELETE_USER, parameters ));
-                        System.out.println(response.getStatusCode());
+                        if(response.getStatusCode() == 200) {
+                            deletionWarning.setText("User successfully deleted");
+                        }
                         List users = generateList();
                         JList<String> userList = new JList(users.toArray());
                         generateList();
-
 
                     } catch (IOException | ClassNotFoundException ex) {
                         ex.printStackTrace();
@@ -73,6 +80,9 @@ public class EditUsers {
         c.gridx = 0;
         c.gridy = 2;
         panel.add(deleteUser,c);
+
+        c.gridx = 1;
+        panel.add(deletionWarning,c);
 
 
 
@@ -143,12 +153,22 @@ public class EditUsers {
         changePasswordButton.addActionListener(e -> {
             ArrayList<String> userCredentials = new ArrayList<>();
             userCredentials.add(userList.getSelectedValue());
-            userCredentials.add(password.getText());
+
+            PasswordHash passwordHash = null;
+            try {
+                passwordHash = new PasswordHash(password.getText());
+            } catch (NoSuchAlgorithmException ex) {
+                ex.printStackTrace();
+            }
+            assert passwordHash != null;
+            userCredentials.add(passwordHash.getHexString());
             userCredentials.add(Session.SessionToken);
+
             try {
                 System.out.println(userCredentials.toString());
                 Response response = SendRequest.serverRequest1(new Request(RequestTypes.SET_PASSWORD, userCredentials));
                 System.out.println(response.getContent());
+                System.out.println(userCredentials);
                 if(response.getStatusCode() == 200) {
                     passwordChangeLabel.setText("Password successfully changed");
                 }
@@ -165,14 +185,33 @@ public class EditUsers {
         c.gridy = 9;
         panel.add(changePasswordButton,c);
 
+        JButton home = new JButton();
+        home.setText("home");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        panel.add(home);
+
+        home.addActionListener(e -> {       //Returns to home Screen
+            System.out.println("home");
+            // Close frame using Frame.dispose() and open another or change what's in this frame
+
+            frame.getContentPane().removeAll();
+            frame.repaint();
+
+            HomePage homePage = new HomePage();
+            try {
+                homePage.main(frame);
+            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+                ex.printStackTrace();
+            }
+        });
+
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.add(panel);
         frame.setVisible(true);
-
-
-
     }
 
     public List generateList() throws IOException, ClassNotFoundException {
@@ -180,12 +219,14 @@ public class EditUsers {
         ArrayList<String> list = new ArrayList<>();
         list.add(Session.SessionToken);
         Response response = SendRequest.serverRequest1(new Request(RequestTypes.LIST_USERS, list));
+
         if(response.getStatusCode() == 403) {
             ArrayList<String> missingList = new ArrayList<>();
             missingList.add(Session.Username);
             return missingList;
         }
-        return new ArrayList<>(Arrays.asList(response.getContent().toString().split(", ")));
+        String Content = response.getContent().toString().substring(1,response.getContent().toString().length() - 1);
+        return new ArrayList<>(Arrays.asList(Content.split(", ")));
     }
 
 }

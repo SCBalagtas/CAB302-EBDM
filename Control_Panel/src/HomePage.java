@@ -76,12 +76,10 @@ public class HomePage {
             frame.repaint();
             try {
                 scheduleBillboards.main(frame);
-            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException | IOException ex) {
                 ex.printStackTrace();
             }
         });
-
-
 
 
         JButton createUserButton = new JButton("Create User");

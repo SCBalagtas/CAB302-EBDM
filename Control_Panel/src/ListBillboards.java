@@ -1,5 +1,8 @@
+import Classes.Billboard;
+import Classes.Billboard.*;
 import Classes.Request;
 import Classes.Response;
+import Classes.Schedule;
 import Constants.RequestTypes;
 import Constants.Session;
 
@@ -10,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 
 /**
  * @author Felix Savins
@@ -18,6 +23,7 @@ import java.util.ArrayList;
  */
 
 public class ListBillboards {
+
 
     public void main(JFrame frame) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException {
 
@@ -28,8 +34,26 @@ public class ListBillboards {
 
         ArrayList<String> list = new ArrayList<>();
         list.add(Session.SessionToken);
-        Response response = SendRequest.serverRequest1(new Request(RequestTypes.LIST_BILLBOARDS, list));
-        System.out.println(response.getContent());
+
+
+        Response billboardResponse = SendRequest.serverRequest1(new Request(RequestTypes.LIST_BILLBOARDS, list));
+
+        ArrayList<Billboard> billboardArrayList = (ArrayList<Billboard>) billboardResponse.getContent();
+
+        for (Billboard billboard : billboardArrayList) {
+            System.out.println(billboard.getBillboardName());
+        }
+
+
+        Response scheduleResponse = SendRequest.serverRequest1(new Request(RequestTypes.VIEW_SCHEDULE, list));
+
+        ArrayList<Schedule> scheduleArrayList = (ArrayList<Schedule>) scheduleResponse.getContent();
+
+        for (Schedule schedule : scheduleArrayList) {
+            System.out.println(schedule.getBillboardName());
+        }
+
+        System.out.println(scheduleResponse.getContent());
 
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
@@ -86,7 +110,7 @@ public class ListBillboards {
 
         JButton edit_s = new JButton("Edit");
         edit_s.addActionListener(e -> {
-            System.out.println(listScheduled.getSelectedIndex() + " : Scheduled" + " : Edit");
+            System.out.println(listScheduled.getSelectedValue() + " : Scheduled" + " : Edit");
         });
 
         c.gridx = 0;
@@ -99,7 +123,7 @@ public class ListBillboards {
 
         JButton delete_s = new JButton("Delete");
         delete_s.addActionListener(e -> {
-            System.out.println(listScheduled.getSelectedIndex() + " : Scheduled" + " : Delete");
+            System.out.println(listScheduled.getSelectedValue() + " : Scheduled" + " : Delete");
         });
 
 
@@ -151,7 +175,7 @@ public class ListBillboards {
 
         JButton edit_u = new JButton("Edit");
         edit_u.addActionListener(e -> {
-            System.out.println(listUnscheduled.getSelectedIndex() + " : Unscheduled" + " : Edit");
+            System.out.println(listUnscheduled.getSelectedValue() + " : Unscheduled" + " : Edit");
         });
 
         c = new GridBagConstraints();
@@ -165,7 +189,7 @@ public class ListBillboards {
 
         JButton delete_u = new JButton("Delete");
         delete_u.addActionListener(e -> {
-            System.out.println(listUnscheduled.getSelectedIndex() + " : Unscheduled" + " : Delete");
+            System.out.println(listUnscheduled.getSelectedValue() + " : Unscheduled" + " : Delete");
         });
 
 
@@ -176,6 +200,24 @@ public class ListBillboards {
         c.weightx = 1;
         c.gridwidth = 1;
         panel.add(delete_u,c);
+
+
+
+        for(Billboard billboard : billboardArrayList) {
+            String currentBillboard = billboard.getBillboardName();
+            for(Schedule schedule : scheduleArrayList) {
+                if(currentBillboard.equals(schedule.getBillboardName())) {
+                    listModel_s.addElement(currentBillboard);
+                    break;
+                }
+            }
+        }
+
+        for(Billboard billboard : billboardArrayList) {
+            if(!listModel_s.contains(billboard.getBillboardName())) {
+                listModel_u.addElement(billboard.getBillboardName());
+            }
+        }
 
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

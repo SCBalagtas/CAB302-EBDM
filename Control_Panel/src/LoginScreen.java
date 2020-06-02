@@ -8,7 +8,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author Felix Savins
@@ -66,7 +70,12 @@ public class LoginScreen {
             try {
                 ArrayList<String> list = new ArrayList<>();
                 list.add(usernameInput.getText());
-                list.add(passwordInput.getText());
+
+                PasswordHash passwordHash = new PasswordHash(passwordInput.getText());
+                list.add(passwordHash.getHexString());
+
+                System.out.println(passwordHash.getHexString());
+
                 Response response = SendRequest.serverRequest1(new Request(RequestTypes.LOGIN, list));
                 if(response.getStatusCode() == 200) {
                     loginFrame.setVisible(false);
@@ -77,7 +86,7 @@ public class LoginScreen {
                 else if(response.getStatusCode() == 401) {
                     warningLabel.setText("Incorrect username or password");
                 }
-            } catch (IOException | ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
+            } catch (IOException | ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException | NoSuchAlgorithmException ex) {
                 ex.printStackTrace();
             }
 
@@ -93,4 +102,5 @@ public class LoginScreen {
         loginFrame.setVisible(true);
 
     }
+
 }

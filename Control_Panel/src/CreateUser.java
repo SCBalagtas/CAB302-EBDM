@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -94,13 +95,14 @@ public class CreateUser {
                     ArrayList<String> userCredentials = new ArrayList<>();
                     userCredentials.add(username.getText());
                     userCredentials.add(permissions.toString());
-                    userCredentials.add(password.getText());
+                    PasswordHash passwordHash = new PasswordHash(password.getText());
+                    userCredentials.add(passwordHash.getHexString());
                     userCredentials.add(Session.SessionToken);
                     System.out.println(userCredentials);
 
                     Response response = SendRequest.serverRequest1(new Request(RequestTypes.CREATE_USER, userCredentials));
                     System.out.println(response.getStatusCode());
-                } catch (IOException | ClassNotFoundException ex) {
+                } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException ex) {
                     ex.printStackTrace();
                 }
             }
