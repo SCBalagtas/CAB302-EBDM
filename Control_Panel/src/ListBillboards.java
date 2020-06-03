@@ -5,13 +5,20 @@ import Classes.Response;
 import Classes.Schedule;
 import Constants.RequestTypes;
 import Constants.Session;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -176,6 +183,43 @@ public class ListBillboards {
         JButton edit_u = new JButton("Edit");
         edit_u.addActionListener(e -> {
             System.out.println(listUnscheduled.getSelectedValue() + " : Unscheduled" + " : Edit");
+
+
+            ArrayList<String> parameters = new ArrayList<>();
+            parameters.add(listUnscheduled.getSelectedValue());
+            parameters.add(Session.SessionToken);
+
+            try {
+                Response response = SendRequest.serverRequest1(new Request(RequestTypes.GET_BILLBOARD, parameters));
+
+                if (response.getStatusCode() == 200) {
+                    String xml = (String) response.getContent();
+
+                    new EditBillboard(listUnscheduled.getSelectedValue(), xml);
+
+                } else if (response.getStatusCode() == 401) {
+                    // show dialog "Unauthorised! Please Log In!"
+                    int option = JOptionPane.showConfirmDialog(null, "Unauthorised! Please Log In!",
+                            "Error!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+
+                    if (option == JOptionPane.OK_OPTION) {
+                        // exit frame
+                        try {
+                            frame.dispose();
+                            LoginScreen loginScreen = new LoginScreen();
+                            loginScreen.main();
+                        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+
         });
 
         c = new GridBagConstraints();
