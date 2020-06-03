@@ -1,4 +1,3 @@
-import Classes.Billboard;
 import Classes.Response;
 
 import java.io.*;
