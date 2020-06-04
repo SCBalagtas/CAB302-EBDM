@@ -15,6 +15,12 @@ import java.net.URL;
 
 import java.lang.*;
 
+/**
+ * @author Felix Savins
+ *  Draws scheduled billboard and returns the panel
+ */
+
+
 public class DrawBillboard {
 
     private String author;
@@ -48,7 +54,14 @@ public class DrawBillboard {
                 Integer.valueOf( string.substring( 5, 7 ), 16 ) );
     }
 
+    /**
+     * Create variables out of billboard content
+     * @param billboardName Billboard name
+     * @param xmlString Billboard content
+     */
+
     public void main(String billboardName, String xmlString) {
+
 
         Document xml;
         try {
@@ -61,34 +74,34 @@ public class DrawBillboard {
             System.out.println(xml.getTextContent());
 
             try {
-                bbBgColour = hexStringToRgb(element.getAttribute("background"));
+                bbBgColour = hexStringToRgb(element.getAttribute("background"));    //Convert billboard background colour to RGB
             }
             catch (IndexOutOfBoundsException ignored) {
-                bbBgColour = Color.WHITE;
+                bbBgColour = Color.WHITE;   //Default background colour to white
             }
             System.out.println("Billboard Colour " + bbBgColour);
 
             try {
-                bbMsg = xml.getElementsByTagName("message").item(0).getTextContent();
+                bbMsg = xml.getElementsByTagName("message").item(0).getTextContent();       // get message text
             } catch (NullPointerException ignored) { }
 
 
             element = (Element) xml.getElementsByTagName("message").item(0);
 
             try {
-                bbMsgColour = hexStringToRgb(element.getAttribute("colour"));
+                bbMsgColour = hexStringToRgb(element.getAttribute("colour"));       //Convert message colour to RGB
             }
             catch (IndexOutOfBoundsException | NullPointerException ignored ) {
-                bbMsgColour = Color.BLACK;
+                bbMsgColour = Color.BLACK;   //Default message colour black
             }
 
             element = (Element) xml.getElementsByTagName("picture").item(0);
 
             try {
-                if (element.getAttribute("url") != "") {
+                if (!element.getAttribute("url").equals("")) {
                     bbImgUrl = element.getAttribute("url");
                     System.out.println(bbImgUrl);
-                } else if (element.getAttribute("data") != "") {
+                } else if (!element.getAttribute("data").equals("")) {
                     bbImgData = element.getAttribute("data");
                     System.out.println(bbImgData);
                 }
@@ -101,8 +114,8 @@ public class DrawBillboard {
             element = (Element) xml.getElementsByTagName("information").item(0);
 
             try {
-                bbInfoColour = hexStringToRgb(element.getAttribute("colour"));
-            } catch(Exception ignored){bbInfoColour = Color.BLACK;}
+                bbInfoColour = hexStringToRgb(element.getAttribute("colour"));      // Convert information colour to RGB
+            } catch(Exception ignored){bbInfoColour = Color.BLACK;}         // Default information colour is black
 
 
         } catch (Exception e) {
@@ -110,6 +123,11 @@ public class DrawBillboard {
         }
 
     }
+
+    /**
+     * Draws the billboard to be displayed
+     * @return JPanel to be displayed
+     */
 
     public JPanel DrawWindow() {
         JPanel panel = new JPanel();
@@ -120,17 +138,17 @@ public class DrawBillboard {
         int messageFont = 100;
 
         try {
-            if (bbMsg.length() < 20) {
+            if (bbMsg.length() < 20) {      // set font size for shot string lengths
                 messageFont = 200;
-            } else if (bbMsg.length() < 30) {
+            } else if (bbMsg.length() < 30) {       // set font size for longer strings
                 messageFont = 110;
             } else {
-                messageFont = (200 / (bbMsg.length() / 15));
+                messageFont = (200 / (bbMsg.length() / 15));        //Scale font down the longer the string
                 System.out.println((bbMsg.length() / 15));
                 System.out.println("200 / " + bbMsg.length() + " / 15");
             }
 
-            bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, messageFont));
+            bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, messageFont));        //Create font of correct size
             bbMsgLbl.setForeground(bbMsgColour); // change the colour of the font
 
             panel.add(bbMsgLbl);
@@ -146,7 +164,7 @@ public class DrawBillboard {
 
 
 
-        if (bbImgUrl != ""){
+        if (!bbImgUrl.equals("")){
 
             Image image = null;
             URL url = null;
@@ -163,17 +181,14 @@ public class DrawBillboard {
                 panel.add(picture);
 
 
-            } catch (MalformedURLException e) {
-                //System.out.println("Malformed URL");
             } catch (IOException e) {
-                //System.out.println("Can not load file");
             }
 
         }
 
         try {
             JLabel bblInfoLbl = new JLabel(bbInfo, SwingConstants.CENTER);
-            bblInfoLbl.setFont(new Font("San Serif", Font.PLAIN, messageFont / 2));
+            bblInfoLbl.setFont(new Font("San Serif", Font.PLAIN, messageFont / 2));     // Set information text size to less then message text size
             System.out.println(bbInfoColour);
             bblInfoLbl.setForeground(bbInfoColour); // change the colour of the font
 

@@ -3,10 +3,22 @@ import Classes.Response;
 import java.io.*;
 import java.net.Socket;
 
+
+/**
+ * @author Felix Savins
+ * Sends request to server
+ */
 public class SendRequest {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
     }
-    public Object o;
+
+    /**
+     *
+     * @param request
+     * @return Response object
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 
     public static Response serverRequest1(Object request) throws IOException, ClassNotFoundException {
         // open a connection to the server
