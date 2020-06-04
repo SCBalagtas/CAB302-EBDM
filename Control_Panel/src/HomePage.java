@@ -37,7 +37,7 @@ public class HomePage {
 
 
         createBillboardButton.addActionListener(e -> {
-            CreateBillboard createBillboard = new CreateBillboard(Session.Username);
+            new CreateBillboard();
             // Close frame using Frame.dispose() and open another or change what's in this frame
         });
 

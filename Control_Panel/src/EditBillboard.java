@@ -1,3 +1,7 @@
+import Classes.Request;
+import Classes.Response;
+import Constants.RequestTypes;
+import Constants.Session;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -16,10 +20,18 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
+/**
+ * Author: Charles Cruz
+ *
+ * This class is the "Edit Billboard" form.
+ */
 public class EditBillboard extends JFrame implements Runnable{
-    private String author;
 
+    /**
+     * Private fields required by the form.
+     */
     private String bbName;
     private Color bbBgColour;
     private String bbMsg;
@@ -32,25 +44,13 @@ public class EditBillboard extends JFrame implements Runnable{
     private String bbImgData;
     private String bbInfo;
     private Color bbInfoColour;
-    private String bbPicMode;
 
-    public static Document loadXmlString(String xml) throws Exception
-    {
-        DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = docFac.newDocumentBuilder();
-        InputSource source = new InputSource(new StringReader(xml));
-
-        Document doc = builder.parse(source);
-        return doc;
-    }
-
-    public static Color hexStringToRgb(String string) {
-        return new Color(
-                Integer.valueOf( string.substring( 1, 3 ), 16 ),
-                Integer.valueOf( string.substring( 3, 5 ), 16 ),
-                Integer.valueOf( string.substring( 5, 7 ), 16 ) );
-    }
-
+    /**
+     * Constructor that pre-sets the initial values of the required fields and launches a new instance of the form.
+     *
+     * @param billboardName a string of the Billboard's name.
+     * @param xmlString a string of the Billboard's XML.
+     */
     public EditBillboard(String billboardName, String xmlString) {
         setTitle("Edit Billboard");
 
@@ -62,26 +62,43 @@ public class EditBillboard extends JFrame implements Runnable{
             bbName = billboardName;
 
             Element element = (Element) xml.getElementsByTagName("billboard").item(0);
-            System.out.println(element.getAttribute("background"));
-            bbBgColour = hexStringToRgb(element.getAttribute("background"));
-
-            bbMsg = xml.getElementsByTagName("message").item(0).getTextContent();
-
-            element = (Element) xml.getElementsByTagName("message").item(0);
-            System.out.println(element.getAttribute("colour"));
-            bbMsgColour = hexStringToRgb(element.getAttribute("colour"));
-
-            element = (Element) xml.getElementsByTagName("picture").item(0);
-            if (element.getAttribute("url") != "") {
-                bbImgUrl = element.getAttribute("url");
-            } else if (element.getAttribute("data") != "") {
-                bbImgData = element.getAttribute("data");
+            if (element.getAttribute("background") != ""){
+                bbBgColour = hexStringToRgb(element.getAttribute("background"));
             }
 
-            bbInfo = xml.getElementsByTagName("information").item(0).getTextContent();
-            element = (Element) xml.getElementsByTagName("information").item(0);
-            System.out.println(element.getAttribute("colour"));
-            bbInfoColour = hexStringToRgb(element.getAttribute("colour"));
+            int elementCount = xml.getElementsByTagName("message").getLength();
+            if (elementCount > 0) {
+                element = (Element) xml.getElementsByTagName("message").item(0);
+                if (element.getTextContent() != "") {
+                    bbMsg = element.getTextContent();
+                }
+                if (element.getAttribute("colour") != ""){
+                    bbMsgColour = hexStringToRgb(element.getAttribute("colour"));
+                }
+            }
+
+            elementCount = xml.getElementsByTagName("picture").getLength();
+            if (elementCount > 0) {
+                element = (Element) xml.getElementsByTagName("picture").item(0);
+                if (element.getAttribute("url") != "") {
+                    bbImgUrl = element.getAttribute("url");
+                } else if (element.getAttribute("data") != "") {
+                    bbImgData = element.getAttribute("data");
+                }
+            }
+
+            elementCount = xml.getElementsByTagName("information").getLength();
+            if (elementCount > 0) {
+                element = (Element) xml.getElementsByTagName("information").item(0);
+                if (element.getTextContent() != "") {
+                    bbInfo = element.getTextContent();
+                }
+                if (element.getAttribute("colour") != ""){
+                    bbInfoColour = hexStringToRgb(element.getAttribute("colour"));
+                }
+            }
+
+            System.out.println(elementCount);
 
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -92,7 +109,41 @@ public class EditBillboard extends JFrame implements Runnable{
         SwingUtilities.invokeLater(this);
     }
 
-    // Update the components of the preview panel
+    /**
+     * Converts an XML String in to an XML Document object.
+     *
+     * @param xml a string of the Billboard' XML.
+     * @return a parsed XML Document object.
+     */
+    public static Document loadXmlString(String xml) throws Exception
+    {
+        DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFac.newDocumentBuilder();
+        InputSource source = new InputSource(new StringReader(xml));
+
+        Document doc = builder.parse(source);
+        return doc;
+    }
+
+    /**
+     * Converts a Hex string in to a Color object.
+     *
+     * @param string a colour code hex string following the format of "#AABBCC".
+     * @return a Color object.
+     */
+    public static Color hexStringToRgb(String string) {
+        return new Color(
+                Integer.valueOf( string.substring( 1, 3 ), 16 ),
+                Integer.valueOf( string.substring( 3, 5 ), 16 ),
+                Integer.valueOf( string.substring( 5, 7 ), 16 ) );
+    }
+
+    /**
+     * Update the components of the preview panel.
+     *
+     * @param previewPanel a JPanel object of the previewPanel.
+     * @return a JPanel with updated previewPanel components.
+     */
     private JPanel previewPanelComps(JPanel previewPanel) {
         JLabel bbMsgLbl = new JLabel(bbMsg, SwingConstants.CENTER);
         bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, 25));
@@ -130,7 +181,9 @@ public class EditBillboard extends JFrame implements Runnable{
         return previewPanel;
     }
 
-    // Update the preview panel
+    /**
+     * Cleans the PreviewPanel and updates the components.
+     */
     private void updatePreview(JPanel previewPanel) {
         previewPanel.removeAll();
 
@@ -141,7 +194,9 @@ public class EditBillboard extends JFrame implements Runnable{
         previewPanel.repaint();
     }
 
-    // Create the full GUI
+    /**
+     * Creates the full GUI
+     */
     private void createGui() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
         setVisible(true);
@@ -452,10 +507,67 @@ public class EditBillboard extends JFrame implements Runnable{
                 }
 
                 bbXml = bbXml + "</billboard>";
-                System.out.println(bbXml);
+                //System.out.println(bbXml);
 
-                //dispose window
-                dispose();
+                try {
+                    ArrayList<String> parameters = new ArrayList<>();
+                    parameters.add(bbName);
+                    parameters.add(bbXml);
+                    parameters.add(Session.SessionToken);
+
+                    Response response = SendRequest.serverRequest1(new Request(RequestTypes.EDIT_BILLBOARD, parameters));
+
+                    if (response.getStatusCode() == 200) {
+                        int option = JOptionPane.showConfirmDialog(null, "Billboard Edited Successfully!",
+                                "OK!", JOptionPane.DEFAULT_OPTION);
+
+                        if (option == JOptionPane.OK_OPTION) {
+                            // exit frame
+                            dispose();
+                        }
+
+                    } else if (response.getStatusCode() == 400) {
+                        // show dialog "Billboard already exists!"
+                        JOptionPane.showMessageDialog(null, "Invalid Parameters!",
+                                "Error!",
+                                JOptionPane.ERROR_MESSAGE);
+
+                    } else if (response.getStatusCode() == 500) {
+                        // show dialog "Billboard already exists!"
+                        JOptionPane.showMessageDialog(null, "Billboard does not exists!",
+                                "Error!",
+                                JOptionPane.ERROR_MESSAGE);
+
+                    } else if (response.getStatusCode() == 403) {
+                        // show dialog "Billboard already exists!"
+                        JOptionPane.showMessageDialog(null, "Forbidden! Missing Permissions!",
+                                "Error!",
+                                JOptionPane.ERROR_MESSAGE);
+
+                    } else if (response.getStatusCode() == 401) {
+                        // show dialog "Unauthorised User"
+                        int option = JOptionPane.showConfirmDialog(null, "Unauthorised User!",
+                                "Error!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+
+                        if (option == JOptionPane.OK_OPTION) {
+                            // exit frame
+                            try {
+                                dispose();
+                                LoginScreen loginScreen = new LoginScreen();
+                                loginScreen.main();
+                            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+
+
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }

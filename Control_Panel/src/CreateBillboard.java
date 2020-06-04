@@ -13,12 +13,18 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
+/**
+ * Author: Charles Cruz
+ *
+ * This class is the "Create Billboard" form.
+ */
 public class CreateBillboard extends JFrame implements Runnable{
-    private String author;
 
+    /**
+     * Private fields required by the form.
+     */
     private String bbName;
     private Color bbBgColour;
     private String bbMsg;
@@ -31,14 +37,14 @@ public class CreateBillboard extends JFrame implements Runnable{
     private String bbImgData;
     private String bbInfo;
     private Color bbInfoColour;
-    private String bbPicMode;
 
-    public CreateBillboard(String username) throws HeadlessException {
+    /**
+     * Constructor that sets the initial values of the required fields and launches a new instance of the form.
+     */
+    public CreateBillboard() throws HeadlessException {
         setTitle("Create Billboard");
 
         // Initial Values
-        author = username;
-
         bbName = "";
         bbBgColour = Color.WHITE;
         bbMsg = "";
@@ -48,11 +54,15 @@ public class CreateBillboard extends JFrame implements Runnable{
         bbImgData = "";
         bbInfo = "";
         bbInfoColour = Color.BLACK;
-        bbPicMode = "";
         SwingUtilities.invokeLater(this);
     }
 
-    // Update the components of the preview panel
+    /**
+     * Update the components of the preview panel.
+     *
+     * @param previewPanel a JPanel object of the previewPanel.
+     * @return a JPanel with updated previewPanel components.
+     */
     private JPanel previewPanelComps(JPanel previewPanel) {
         JLabel bbMsgLbl = new JLabel(bbMsg, SwingConstants.CENTER);
         bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, 25));
@@ -90,7 +100,9 @@ public class CreateBillboard extends JFrame implements Runnable{
         return previewPanel;
     }
 
-    // Update the preview panel
+    /**
+     * Cleans the PreviewPanel and updates the components.
+     */
     private void updatePreview(JPanel previewPanel) {
         previewPanel.removeAll();
 
@@ -101,7 +113,9 @@ public class CreateBillboard extends JFrame implements Runnable{
         previewPanel.repaint();
     }
 
-    // Create the full GUI
+    /**
+     * Creates the full GUI
+     */
     private void createGui() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
         setVisible(true);
@@ -429,52 +443,52 @@ public class CreateBillboard extends JFrame implements Runnable{
                 //System.out.println(bbXml);
 
                 try {
-                    ArrayList<String> parameters = new ArrayList<>();
-                    parameters.add(bbName);
-                    parameters.add(bbXml);
-                    parameters.add(Session.SessionToken);
+                        ArrayList<String> parameters = new ArrayList<>();
+                        parameters.add(bbName);
+                        parameters.add(bbXml);
+                        parameters.add(Session.SessionToken);
 
-                    Response response = SendRequest.serverRequest1(new Request(RequestTypes.CREATE_BILLBOARD, parameters));
+                        Response response = SendRequest.serverRequest1(new Request(RequestTypes.CREATE_BILLBOARD, parameters));
 
-                    if (response.getStatusCode() == 201) {
-                        int option = JOptionPane.showConfirmDialog(null, "Billboard Created Successfully!",
-                                "Success!", JOptionPane.DEFAULT_OPTION);
+                        if (response.getStatusCode() == 201) {
+                            int option = JOptionPane.showConfirmDialog(null, "Billboard Created Successfully!",
+                                    "Success!", JOptionPane.DEFAULT_OPTION);
 
-                        if (option == JOptionPane.OK_OPTION) {
-                            // exit frame
-                            dispose();
-                        }
-
-
-                    } else if (response.getStatusCode() == 500) {
-                        // show dialog "Billboard already exists!"
-                        JOptionPane.showMessageDialog(null,"Billboard already exists!",
-                                "Warning!",
-                                JOptionPane.WARNING_MESSAGE);
-
-
-                    } else if (response.getStatusCode() == 403) {
-                        // show dialog "Forbidden! Missing Permissions!"
-                        JOptionPane.showMessageDialog(null,"Forbidden! Missing Permissions!",
-                                "Error!",
-                                JOptionPane.ERROR_MESSAGE);
-
-                    } else if (response.getStatusCode() == 401) {
-                        // show dialog "Unauthorised User"
-                        int option = JOptionPane.showConfirmDialog(null, "Unauthorised User!",
-                                "Error!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
-
-                        if (option == JOptionPane.OK_OPTION) {
-                            // exit frame
-                            try {
+                            if (option == JOptionPane.OK_OPTION) {
+                                // exit frame
                                 dispose();
-                                LoginScreen loginScreen = new LoginScreen();
-                                loginScreen.main();
-                            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
-                                ex.printStackTrace();
+                            }
+
+
+                        } else if (response.getStatusCode() == 500) {
+                            // show dialog "Billboard already exists!"
+                            JOptionPane.showMessageDialog(null,"Billboard already exists!",
+                                    "Warning!",
+                                    JOptionPane.WARNING_MESSAGE);
+
+
+                        } else if (response.getStatusCode() == 403) {
+                            // show dialog "Forbidden! Missing Permissions!"
+                            JOptionPane.showMessageDialog(null,"Forbidden! Missing Permissions!",
+                                    "Error!",
+                                    JOptionPane.ERROR_MESSAGE);
+
+                        } else if (response.getStatusCode() == 401) {
+                            // show dialog "Unauthorised User"
+                            int option = JOptionPane.showConfirmDialog(null, "Unauthorised User!",
+                                    "Error!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+
+                            if (option == JOptionPane.OK_OPTION) {
+                                // exit frame
+                                try {
+                                    dispose();
+                                    LoginScreen loginScreen = new LoginScreen();
+                                    loginScreen.main();
+                                } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException ex) {
+                                    ex.printStackTrace();
+                                }
                             }
                         }
-                    }
 
                 } catch (IOException ex) {
                     ex.printStackTrace();
