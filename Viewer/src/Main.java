@@ -1,12 +1,14 @@
+import Classes.Billboard;
 import Classes.Request;
 import Classes.Response;
-import Classes.Billboard;
+import Constants.RequestTypes;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
 
 public class Main {
 
@@ -61,45 +63,40 @@ public class Main {
         });
 
 
-        DrawBillboard drawBillboard = new DrawBillboard();
+        DefaultBillboard defaultBillboard = new DefaultBillboard();
         ArrayList<String> list = new ArrayList<>();
-        ArrayList<String> emptylist = new ArrayList<>();
+        String previouslyDrawn = "unique string";
         for (; ; ) {
 
-            //Response response = SendRequest.serverRequest1(new Request(RequestTypes., list));
+            Response response = SendRequest.serverRequest1(new Request(RequestTypes.CURRENT_BILLBOARD, list));
+            System.out.println(response.getContent().toString());
+            String Content = response.getContent().toString();
 
-            if (false) {       //If response contains billboard display billboard
-                //Needs support for long string
-                drawBillboard.main("BillboardName", "<billboard background=\"#8996FF\">\n" +
-                        "<picture url=\"https://cloudstor.aarnet.edu.au/plus/s/5fhToroJL0nMKvB/download\"/>\n" +
-                        "</billboard>");
+            if (!Content.equals("") && !Content.equals(previouslyDrawn)) {
+                frame.dispose();
+                DrawBillboard drawBillboard = new DrawBillboard();
+                drawBillboard.main("BillboardName", "\"" + Content + "\"");
                 frame.add(drawBillboard.DrawWindow());
+                previouslyDrawn = response.getContent().toString();
 
-            } else {       //Display defualt billboard
-                DefaultBillboard defaultBillboard = new DefaultBillboard();
+
+            } else if (!Content.equals(previouslyDrawn)) {
+                frame.dispose();
+                System.out.println("NO RETURN");
                 frame.add(defaultBillboard.main(frame));
-
+                previouslyDrawn = "";
             }
 
-
-
-            //Needs support for long string
-
-
-
             try {
-
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setSize(1920,1080);
                 frame.setLocationRelativeTo(null);
                 frame.setUndecorated(true);
                 frame.setVisible(true);
-            } catch (Exception ignored) {
-            }
-            ;
+            } catch (Exception ignored) { };
 
 
-            System.out.println("TIME");
             TimeUnit.SECONDS.sleep(15);
 
         }

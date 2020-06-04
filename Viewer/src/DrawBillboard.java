@@ -1,5 +1,6 @@
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.css.Rect;
 import org.xml.sax.InputSource;
 
 import javax.imageio.ImageIO;
@@ -11,6 +12,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import java.lang.*;
 
 public class DrawBillboard {
 
@@ -61,7 +64,7 @@ public class DrawBillboard {
                 bbBgColour = hexStringToRgb(element.getAttribute("background"));
             }
             catch (IndexOutOfBoundsException ignored) {
-                bbBgColour = Color.BLACK;
+                bbBgColour = Color.WHITE;
             }
             System.out.println("Billboard Colour " + bbBgColour);
 
@@ -110,12 +113,37 @@ public class DrawBillboard {
 
     public JPanel DrawWindow() {
         JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3,1));
+
         JLabel bbMsgLbl = new JLabel(bbMsg, SwingConstants.CENTER);
-        bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, 25));
-        bbMsgLbl.setForeground(bbMsgColour); // change the colour of the font
+
+        int messageFont = 100;
+
+        try {
+            if (bbMsg.length() < 20) {
+                messageFont = 200;
+            } else if (bbMsg.length() < 30) {
+                messageFont = 110;
+            } else {
+                messageFont = (200 / (bbMsg.length() / 15));
+                System.out.println((bbMsg.length() / 15));
+                System.out.println("200 / " + bbMsg.length() + " / 15");
+            }
+
+            bbMsgLbl.setFont(new Font("San Serif", Font.BOLD, messageFont));
+            bbMsgLbl.setForeground(bbMsgColour); // change the colour of the font
+
+            panel.add(bbMsgLbl);
+
+        } catch(Exception ignored) {
+            JLabel blankLabel = new JLabel();
+            panel.add(blankLabel);
+        }
+
+
         panel.setBackground(bbBgColour);
 
-        panel.add(bbMsgLbl);
+
 
 
         if (bbImgUrl != ""){
@@ -126,10 +154,14 @@ public class DrawBillboard {
                 url = new URL(bbImgUrl);
                 image = ImageIO.read(url);
 
-                JLabel bbImgLbl = new JLabel(new ImageIcon(image), SwingConstants.CENTER);
-                bbImgLbl.setMaximumSize(new Dimension(480, 360));
-                bbImgLbl.setSize(new Dimension(480, 360));
-                panel.add(bbImgLbl);
+
+                Image newImage = image.getScaledInstance(100,100,Image.SCALE_DEFAULT);
+
+
+                JLabel picture = new JLabel((new ImageIcon(newImage)));
+
+                panel.add(picture);
+
 
             } catch (MalformedURLException e) {
                 //System.out.println("Malformed URL");
@@ -139,12 +171,16 @@ public class DrawBillboard {
 
         }
 
+        try {
+            JLabel bblInfoLbl = new JLabel(bbInfo, SwingConstants.CENTER);
+            bblInfoLbl.setFont(new Font("San Serif", Font.PLAIN, messageFont / 2));
+            System.out.println(bbInfoColour);
+            bblInfoLbl.setForeground(bbInfoColour); // change the colour of the font
 
-        JLabel bblInfoLbl = new JLabel(bbInfo, SwingConstants.CENTER);
-        bblInfoLbl.setFont(new Font("San Serif", Font.PLAIN, 16));
-        System.out.println(bbInfoColour);
-        bblInfoLbl.setForeground(bbInfoColour); // change the colour of the font
-        panel.add(bblInfoLbl);
+            panel.add(bblInfoLbl);
+        }
+        catch (Exception ignored) {}
+
 
         return panel;
 

@@ -5,7 +5,7 @@ public class DefaultBillboard {
     public JPanel main(JFrame frame) {
         JPanel panel = new JPanel();
 
-        JLabel label = new JLabel("DEFAULT");
+        JLabel label = new JLabel("No Scheduled Billboard");
         label.setFont(new Font("Serif", Font.PLAIN, 120));
         panel.add(label);
 
