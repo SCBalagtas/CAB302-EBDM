@@ -90,6 +90,8 @@ public class Main {
                     DeleteSchedule.deleteSchedule(request.getRequestParameters(), sessions, oos);
                 } else if (request.getRequestType().equals(RequestTypes.VIEW_SCHEDULE)) {
                     ViewSchedule.viewSchedule(request.getRequestParameters(), sessions, oos);
+                } else if (request.getRequestType().equals(RequestTypes.CURRENT_BILLBOARD)) {
+                    CurrentBillboard.currentBillboard(oos);
                 } else {
                     oos.writeObject(new Response(StatusCodes.BAD_REQUEST, "Request Type Invalid"));
                     oos.flush();

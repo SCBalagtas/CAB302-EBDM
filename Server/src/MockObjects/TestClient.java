@@ -364,6 +364,9 @@ public class TestClient {
         sendRequest(RequestTypes.LOGOUT, workingLogout);
         sendRequest(RequestTypes.LOGOUT, wrongLogout);
         sendRequest(RequestTypes.LOGOUT, brokenLogout);
+
+        // current billboard request tests
+        sendRequest(RequestTypes.CURRENT_BILLBOARD, workingLogout);
     }
 
     public static String sendRequest(String requestType, ArrayList<String> parameters) throws IOException, ClassNotFoundException {

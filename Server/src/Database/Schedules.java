@@ -227,4 +227,89 @@ public class Schedules {
         // return schedules
         return schedules;
     }
+
+    /**
+     * Get the currently scheduled billboard's content.
+     *
+     * @return a string of the billboard's content.
+     */
+    public static String getCurrentlyScheduledBillboard() {
+        // string to store the billboard's content that will be sent to the client
+        String billboardContent = "";
+        String billboardName;
+
+        // int array to store the scheduleIds of the schedules that are currently scheduled
+        ArrayList<Integer> schedulesCurrentlyScheduled = new ArrayList<>();
+
+        // try to get the content of the currently scheduled billboard
+        try {
+            // create new connection and statement object
+            Connection connection = DBConnection.getConnection();
+            Statement statement = connection.createStatement();
+
+            // get all the schedules and see if any are scheduled in between LocalDateTime.now() and the duration of the schedule
+            ResultSet resultSet = statement.executeQuery("SELECT scheduleId, schedule, duration FROM schedules");
+            statement.close();
+
+            // check if result set is empty, then return billboardContent
+            if (!resultSet.next()) { return billboardContent; }
+            resultSet.beforeFirst();
+
+            while (resultSet.next()) {
+                LocalDateTime schedule = resultSet.getTimestamp("schedule").toLocalDateTime();
+                int duration = resultSet.getInt("duration");
+                // check if this LocalDateTime.now() is between the schedule and the schedule plus the duration
+                if (LocalDateTime.now().isAfter(schedule) && LocalDateTime.now().isBefore(schedule.plusMinutes(duration))) {
+                    // add this schedule's scheduleId into schedulesCurrentlyScheduled
+                    schedulesCurrentlyScheduled.add(resultSet.getInt("scheduleId"));
+                }
+            }
+
+            // if schedulesCurrentlyScheduled.size() == 0, return billboardContent
+            if (schedulesCurrentlyScheduled.size() == 0) { return billboardContent; }
+
+            // generate a (?, ?, ...) for however many elements are in schedulesCurrentlyScheduled
+            String questionMarks = "(";
+            for (int i = 0; i < schedulesCurrentlyScheduled.size(); i++) {
+                if (i == schedulesCurrentlyScheduled.size() - 1) {
+                    questionMarks += "?)";
+                } else {
+                    questionMarks += "?, ";
+                }
+            }
+
+            // get the billboardName of the billboard from the latest created schedule that is currently scheduled
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    String.format("SELECT scheduleId, billboardName FROM schedules WHERE scheduleId IN %s ORDER BY creationDate DESC", questionMarks)
+            );
+            preparedStatement.clearParameters();
+            for (int i = 1; i <= schedulesCurrentlyScheduled.size(); i++) {
+                preparedStatement.setInt(i, schedulesCurrentlyScheduled.get(i - 1));
+            }
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            billboardName = resultSet.getString("billboardName");
+
+            // get this billboard's content
+            preparedStatement = connection.prepareStatement(
+                    "SELECT content FROM billboards WHERE billboardName=?"
+            );
+            preparedStatement.clearParameters();
+            preparedStatement.setString(1, billboardName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            billboardContent = resultSet.getString("content");
+
+            // close result set
+            resultSet.close();
+
+            // close statement and connection object
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        // return billboardContent
+        return billboardContent;
+    }
 }
