@@ -2,10 +2,15 @@ import Classes.Billboard;
 import Classes.Request;
 import Classes.Response;
 import Constants.RequestTypes;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.awt.event.*;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +86,7 @@ public class Main {
         ConnectionError connectionError = new ConnectionError();        //new connection error window instance
         ArrayList<String> list = new ArrayList<>();     //empty list to send to server
         String previouslyDrawn = "unique string";       //String that cannot be returned by server to compare initial response to
+        Document xml;
 
         for (; ; ) {
             try {
@@ -88,10 +94,13 @@ public class Main {
                 String Content = response.getContent().toString();
 
                 if (!Content.equals("") && !Content.equals(previouslyDrawn)) {      //if content is returned and is not what is currently being displayed
+                    xml = loadXmlString(Content);
+                    xml.getDocumentElement().normalize();
+                    System.out.println(xml.toString());
                     frame.dispose();
                     frame.getContentPane().removeAll();
                     DrawBillboard drawBillboard = new DrawBillboard();
-                    drawBillboard.main("BillboardName", Content);   // Create variables for drawing billboard
+                    drawBillboard.main("BillboardName", xml);   // Create variables for drawing billboard
                     frame.add(drawBillboard.DrawWindow());          //Add panel returned from drawbillboard to frame
                     previouslyDrawn = response.getContent().toString();
 
@@ -110,12 +119,14 @@ public class Main {
                 System.out.println("Connection error");
                 frame.dispose();
                 frame.add(connectionError.main());     //add connection panel to frame
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-                try {
+            try {
                     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                    //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                    frame.setSize(1920, 1080);
+                    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    //frame.setSize(1920, 1080);
                     frame.setLocationRelativeTo(null);
                     frame.setUndecorated(true);
                     frame.setVisible(true);
@@ -129,5 +140,14 @@ public class Main {
 
         }
 
+    }
+    public static Document loadXmlString(String xml) throws Exception
+    {
+        DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = docFac.newDocumentBuilder();
+        InputSource source = new InputSource(new StringReader(xml));
+
+        Document doc = builder.parse(source);
+        return doc;
     }
 }

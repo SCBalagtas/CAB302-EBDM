@@ -1,4 +1,5 @@
 import Classes.Response;
+import Configs.NetworkConfig;
 
 import java.io.*;
 import java.net.Socket;
@@ -22,7 +23,7 @@ public class SendRequest {
 
     public static Response serverRequest1(Object request) throws IOException, ClassNotFoundException {
         // open a connection to the server
-        Socket socket = new Socket("localhost", 3000);
+        Socket socket = new Socket(NetworkConfig.getUrl(), NetworkConfig.getPort());
 
         // write a request to the client
 

@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.IOException;
 import java.io.StringReader;
@@ -60,13 +61,11 @@ public class DrawBillboard {
      * @param xmlString Billboard content
      */
 
-    public void main(String billboardName, String xmlString) {
+    public void main(String billboardName, Document xml) {
 
 
-        Document xml;
+
         try {
-            xml = loadXmlString(xmlString);
-            xml.getDocumentElement().normalize();
 
             bbName = billboardName;
             Element element = (Element) xml.getElementsByTagName("billboard").item(0);
@@ -163,28 +162,32 @@ public class DrawBillboard {
 
 
 
+        try {
+            if (!bbImgUrl.equals("")){
 
-        if (!bbImgUrl.equals("")){
-
-            Image image = null;
-            URL url = null;
-            try {
-                url = new URL(bbImgUrl);
-                image = ImageIO.read(url);
-
-
-                Image newImage = image.getScaledInstance(100,100,Image.SCALE_DEFAULT);
+                Image image = null;
+                URL url = null;
+                try {
+                    url = new URL(bbImgUrl);
+                    image = ImageIO.read(url);
 
 
-                JLabel picture = new JLabel((new ImageIcon(newImage)));
-
-                panel.add(picture);
+                    Image newImage = image.getScaledInstance(100,100,Image.SCALE_DEFAULT);
 
 
-            } catch (IOException e) {
+                    JLabel picture = new JLabel((new ImageIcon(newImage)));
+
+                    panel.add(picture);
+
+
+                } catch (IOException e) {
+                }
+
             }
 
         }
+        catch (NullPointerException ignored) {}
+
 
         try {
             JLabel bblInfoLbl = new JLabel(bbInfo, SwingConstants.CENTER);
