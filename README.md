@@ -1,4 +1,4 @@
-# CAB302
+# CAB302-EBDM
 Source code of the CAB302 major assignment: Electornic Billboard Display and Management System
 
 # Authors
